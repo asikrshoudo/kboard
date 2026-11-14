@@ -18,3 +18,7 @@ kotlin {
         jvmTarget = JvmTarget.fromTarget(jvmLevel)
     }
 }
+
+dependencies {
+    testImplementation(libs.junit)
+}
