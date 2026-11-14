@@ -1,0 +1,16 @@
+name: Version check
+
+# Manual only. Prints the latest stable toolchain versions so that
+# gradle/libs.versions.toml is pinned from facts, not from memory.
+on: workflow_dispatch
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: List latest stable versions
+        run: bash scripts/ci/list-versions.sh
