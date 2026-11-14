@@ -30,4 +30,15 @@ latest_stable "Room" "$GOOGLE/androidx/room/room-runtime"
 latest_stable "DataStore" "$GOOGLE/androidx/datastore/datastore-preferences"
 latest_stable "Coroutines" "$CENTRAL/org/jetbrains/kotlinx/kotlinx-coroutines-core"
 latest_stable "Detekt (io.gitlab)" "$CENTRAL/io/gitlab/arturbosch/detekt/detekt-gradle-plugin"
-latest_stable "Detekt (dev.detekt)" "$CENTRAL/dev/detekt/detekt-gradle-plugin"
+
+# Newest 5 versions in repository order, pre-releases included
+# (detekt 2.x may still be alpha, so the stable filter would hide it).
+latest_any() {
+  local label="$1" url="$2" versions
+  versions=$(curl -fsSL "$url/maven-metadata.xml" \
+    | grep -oP '(?<=<version>)[^<]+' | tail -5 | tr '\n' ' ') || versions=""
+  echo "VER $label: ${versions:-lookup failed ($url)}"
+}
+
+latest_any "Detekt 2.x marker" "$CENTRAL/dev/detekt/dev.detekt.gradle.plugin"
+latest_any "Detekt 2.x artifact" "$CENTRAL/dev/detekt/detekt-gradle-plugin"
