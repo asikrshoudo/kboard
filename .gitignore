@@ -33,3 +33,9 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# Signing material must never be committed (see docs on GitHub Secrets)
+*.jks
+*.keystore
+*.p12
+keystore.properties

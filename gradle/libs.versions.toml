@@ -1,0 +1,19 @@
+# Versions verified against Maven Central / Google Maven via the
+# "Version check" workflow on 2026-11-14. Libraries are added together
+# with the module that uses them.
+[versions]
+agp = "9.5.1"
+kotlin = "2.4.21"
+ksp = "2.3.14"
+hilt = "2.60.1"
+# detekt 2.0 has no stable release yet; 1.23.x predates AGP 9 built-in Kotlin.
+detekt = "2.0.0-alpha.6"
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+detekt = { id = "dev.detekt", version.ref = "detekt" }
