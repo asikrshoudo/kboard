@@ -1,8 +1,14 @@
 name: Version check
 
-# Manual only. Prints the latest stable toolchain versions so that
+# Prints the latest stable toolchain versions so that
 # gradle/libs.versions.toml is pinned from facts, not from memory.
-on: workflow_dispatch
+# Runs when the lookup script or this file changes, or on demand.
+on:
+  push:
+    paths:
+      - scripts/ci/list-versions.sh
+      - .github/workflows/version-check.yml
+  workflow_dispatch:
 
 permissions:
   contents: read

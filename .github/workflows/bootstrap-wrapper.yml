@@ -1,14 +1,13 @@
 name: Bootstrap Gradle wrapper
 
-# Manual only. Generates the Gradle wrapper in CI (no local Gradle exists)
-# and commits it to the branch it was run on.
+# Generates the Gradle wrapper in CI (no local Gradle exists) and commits it.
+# Runs when gradle/wrapper-version.txt changes. The commit is made with
+# GITHUB_TOKEN, which does not trigger further workflows, so no loop.
 on:
+  push:
+    paths:
+      - gradle/wrapper-version.txt
   workflow_dispatch:
-    inputs:
-      gradle_version:
-        description: Gradle version to pin
-        required: true
-        default: "9.9.1"
 
 permissions:
   contents: write
@@ -18,19 +17,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Read pinned Gradle version
+        id: version
+        run: echo "value=$(tr -d '[:space:]' < gradle/wrapper-version.txt)" >> "$GITHUB_OUTPUT"
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "21"
       - uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: ${{ inputs.gradle_version }}
+          gradle-version: ${{ steps.version.outputs.value }}
       - name: Generate wrapper
-        run: gradle wrapper --gradle-version "${{ inputs.gradle_version }}" --distribution-type bin
+        run: gradle wrapper --gradle-version "${{ steps.version.outputs.value }}" --distribution-type bin
       - name: Commit wrapper
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add gradlew gradlew.bat gradle/wrapper
-          git commit -m "build: add Gradle wrapper ${{ inputs.gradle_version }}"
+          git diff --cached --quiet || git commit -m "build: pin Gradle wrapper ${{ steps.version.outputs.value }}"
           git push
