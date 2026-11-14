@@ -49,6 +49,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":ime"))
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 }
