@@ -9,3 +9,8 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.detekt) apply false
 }
+
+// Static analysis runs on every module.
+subprojects {
+    apply(plugin = "dev.detekt")
+}

@@ -15,3 +15,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "kboard"
+
+include(":app", ":engine")

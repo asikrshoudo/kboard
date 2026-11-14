@@ -8,6 +8,16 @@ ksp = "2.3.14"
 hilt = "2.60.1"
 # detekt 2.0 has no stable release yet; 1.23.x predates AGP 9 built-in Kotlin.
 detekt = "2.0.0-alpha.6"
+# Android API levels. min-sdk 26 = Android 8.0.
+compile-sdk = "36"
+target-sdk = "36"
+min-sdk = "26"
+# Bytecode level shared by every module so they can depend on each other.
+jvm = "17"
+
+[libraries]
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
