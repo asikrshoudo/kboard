@@ -1,11 +1,14 @@
 name: Release
 
-# Runs when a version tag is pushed, e.g. v0.1.0. Builds a signed APK and
-# AAB and attaches them to a GitHub Release. Tags containing "-" (such as
-# v0.0.1-test) are published as pre-releases.
+# Runs when version.txt changes on main. Runs tests and lint, builds a signed
+# APK and AAB, and publishes them as GitHub Release "v<version>". The release
+# creates its own tag, so no manual git tag is needed. Versions containing "-"
+# (for example 0.0.1-test) are published as pre-releases.
 on:
   push:
-    tags: ["v*"]
+    branches: [main]
+    paths:
+      - version.txt
 
 permissions:
   contents: write
@@ -15,6 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Read version
+        run: echo "VERSION=$(tr -d '[:space:]' < version.txt)" >> "$GITHUB_ENV"
       - uses: gradle/actions/wrapper-validation@v4
       - uses: actions/setup-java@v4
         with:
@@ -27,14 +32,14 @@ jobs:
         run: |
           echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/kboard.p12"
           echo "KBOARD_KEYSTORE_PATH=$RUNNER_TEMP/kboard.p12" >> "$GITHUB_ENV"
-      - name: Build signed APK and AAB
+      - name: Test, lint and build signed APK and AAB
         env:
           KBOARD_KEYSTORE_PASSWORD: ${{ secrets.KBOARD_KEYSTORE_PASSWORD }}
           KBOARD_KEY_ALIAS: ${{ secrets.KBOARD_KEY_ALIAS }}
         run: >
-          ./gradlew assembleRelease bundleRelease
-          -Pkboard.versionName="${GITHUB_REF_NAME#v}"
-          -Pkboard.versionCode="${GITHUB_RUN_NUMBER}"
+          ./gradlew check assembleRelease bundleRelease
+          -Pkboard.versionName="$VERSION"
+          -Pkboard.versionCode="$GITHUB_RUN_NUMBER"
       - name: Verify APK signature
         run: |
           APKSIGNER="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)/apksigner"
@@ -44,7 +49,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           FLAGS=""
-          if [[ "$GITHUB_REF_NAME" == *-* ]]; then FLAGS="--prerelease"; fi
-          gh release create "$GITHUB_REF_NAME" $FLAGS --generate-notes \
+          if [[ "$VERSION" == *-* ]]; then FLAGS="--prerelease"; fi
+          gh release create "v$VERSION" $FLAGS --target "$GITHUB_SHA" --generate-notes \
             app/build/outputs/apk/release/*.apk \
             app/build/outputs/bundle/release/*.aab
