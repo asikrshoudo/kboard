@@ -61,7 +61,7 @@ scripts/ci/   Helper scripts used by workflows
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) (added in the next documentation batch).
+See [CONTRIBUTING.md](CONTRIBUTING.md), the [Code of Conduct](CODE_OF_CONDUCT.md) and the [Security Policy](SECURITY.md).
 
 ## License
 

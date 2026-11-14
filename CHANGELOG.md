@@ -12,4 +12,4 @@ had a public release yet.
 - `:app` module with Hilt, and an empty `:engine` module.
 - CI: debug APK, unit tests, Lint and Detekt on every push.
 - Release pipeline: a signed APK and AAB published when `version.txt` changes.
-- Documentation: README, ARCHITECTURE and decision records.
+- Documentation: README, ARCHITECTURE, CONTRIBUTING, CODE_OF_CONDUCT, SECURITY and decision records.
