@@ -3,6 +3,8 @@ package com.kboard.thekami.ime.service
 import android.inputmethodservice.InputMethodService
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import com.kboard.thekami.data.settings.KeyboardSettings
+import com.kboard.thekami.data.settings.createSettingsRepository
 import com.kboard.thekami.engine.input.KeyInputHandler
 import com.kboard.thekami.engine.layout.EnglishUsLayout
 import com.kboard.thekami.engine.layout.Key
@@ -10,8 +12,12 @@ import com.kboard.thekami.ime.feedback.KeyHaptics
 import com.kboard.thekami.ime.input.InputConnectionEditor
 import com.kboard.thekami.ime.render.KeyListener
 import com.kboard.thekami.ime.render.KeyboardView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
-/** The system-facing keyboard service. Wires the view to input and feedback. */
+/** The system-facing keyboard service. Wires the view to input, feedback and settings. */
 class KboardImeService : InputMethodService() {
     private val inputHandler = KeyInputHandler(
         InputConnectionEditor(
@@ -20,15 +26,34 @@ class KboardImeService : InputMethodService() {
         ),
     )
     private val haptics by lazy { KeyHaptics(this) }
+    private val serviceScope = CoroutineScope(SupervisorJob())
     private var keyboardView: KeyboardView? = null
+
+    // Written from a background coroutine, read on the main thread per keypress.
+    @Volatile
+    private var hapticsEnabled = KeyboardSettings().hapticsEnabled
 
     private val keyListener = object : KeyListener {
         override fun onKeyPress(key: Key) {
-            haptics.perform(key)
+            if (hapticsEnabled) haptics.perform(key)
             typeKey(key)
         }
 
         override fun onKeyRepeat(key: Key) = typeKey(key)
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        serviceScope.launch {
+            createSettingsRepository(applicationContext).settings.collect {
+                hapticsEnabled = it.hapticsEnabled
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        serviceScope.cancel()
+        super.onDestroy()
     }
 
     override fun onCreateInputView(): View =

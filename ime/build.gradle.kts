@@ -19,4 +19,6 @@ android {
 
 dependencies {
     implementation(project(":engine"))
+    implementation(project(":data"))
+    implementation(libs.coroutines.core)
 }
