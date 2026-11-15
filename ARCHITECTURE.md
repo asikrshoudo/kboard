@@ -10,9 +10,9 @@ Status labels: **Implemented** exists in the repository and builds in CI.
 | `:app` | Implemented (skeleton) | Android application, Hilt root, manifest, later the Compose companion UI |
 | `:engine` | Implemented (empty) | Pure Kotlin/JVM. Language rules, layouts as data, prediction, autocorrect. No Android dependency, so tests run in seconds |
 | `:ime` | Planned (Phase 1) | `InputMethodService`, keyboard view, input handling, haptics, sound |
-| `:data` | Planned (Phase 4) | Room (personal dictionary, n-gram counts), DataStore (settings) |
+| `:data` | Implemented (settings only) | DataStore settings shared by the app and the keyboard. Room (personal dictionary, n-gram counts) is planned for Phase 4 |
 
-Dependency direction: `:app` -> `:ime`, `:data` -> `:engine`. `:engine`
+Dependency direction: `:app` -> `:ime`, `:data`; `:ime` -> `:data`, `:engine`. `:engine` never depends on an Android module. `:data` will depend on `:engine` once it stores engine data.
 never depends on an Android module. Modules are created when their first
 real code arrives, not before.
 

@@ -1,4 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Kboard</string>
+    <string name="tagline">A keyboard that learns how you type, not how everyone types.</string>
+
+    <string name="setup_title">Set up Kboard</string>
+    <string name="step_enable_title">1. Enable Kboard</string>
+    <string name="step_enable_description">Turn on Kboard in your phone keyboard settings.</string>
+    <string name="step_enable_action">Open settings</string>
+    <string name="step_select_title">2. Switch to Kboard</string>
+    <string name="step_select_description">Choose Kboard as the keyboard you type with.</string>
+    <string name="step_select_action">Choose keyboard</string>
+    <string name="step_done">Done</string>
+    <string name="ready_title">Kboard is ready</string>
+    <string name="ready_body">Kboard is your active keyboard. Try it below.</string>
+
+    <string name="typing_title">Typing</string>
+    <string name="haptics_title">Vibrate on keypress</string>
+    <string name="haptics_description">Each kind of key has its own vibration.</string>
+
+    <string name="try_title">Try it</string>
+    <string name="try_label">Type here</string>
+
+    <string name="privacy_title">Privacy</string>
+    <string name="privacy_body">Kboard has no internet permission. What you type is never stored, logged or sent anywhere. Learning and personal suggestions are not built yet; when they arrive they will stay on your phone.</string>
 </resources>

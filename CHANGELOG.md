@@ -18,3 +18,6 @@ had a public release yet.
 - Key previews, backspace hold-to-repeat and per-key haptics (adds the
   `VIBRATE` permission). CI debug builds on pushes are signed with the
   project key so installed builds can be updated in place.
+- Companion app (Jetpack Compose, Material 3, dynamic color): setup guide,
+  haptics setting and a typing test field. Settings are stored with
+  DataStore in the new `:data` module and read by the keyboard.

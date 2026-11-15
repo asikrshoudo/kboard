@@ -14,11 +14,12 @@ What exists today:
 - Gradle build (Kotlin DSL, version catalog, pinned toolchain)
 - `:app` (Hilt application class), `:engine` (layout, geometry and input logic, with tests) and `:ime` (keyboard service and Canvas view)
 - English (US) QWERTY keyboard: shift, backspace with hold-to-repeat, key previews and per-key haptics
+- Companion app (Material 3): setup guide, haptics setting, typing test field
 - GitHub Actions: build, unit tests, Lint and Detekt on every push
 - Signed APK and AAB release pipeline
 
 What does not exist yet: other languages, number and symbol layers,
-prediction, autocorrect, key sounds, settings, the companion app UI.
+prediction, autocorrect, key sounds and most settings.
 
 ## Planned goals (not implemented)
 

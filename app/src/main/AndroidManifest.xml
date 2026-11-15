@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Privacy: this manifest requests no permissions, in particular no
-         INTERNET, so typed text cannot leave the device. allowBackup is off
-         so learned vocabulary is never copied into cloud backups. -->
+    <!-- Privacy: the app requests no permissions of its own and in particular no
+         INTERNET (the keyboard module adds VIBRATE for key haptics). allowBackup
+         is off so settings and learned data are never copied into cloud backups. -->
     <application
         android:name=".KboardApp"
         android:allowBackup="false"
-        android:label="@string/app_name" />
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.Kboard">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
 </manifest>
