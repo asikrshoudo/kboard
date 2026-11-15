@@ -51,4 +51,24 @@ class SettingsRepositoryTest {
         repository.setIncognitoEnabled(true)
         assertTrue(repository.settings.first().incognitoEnabled)
     }
+
+    @Test
+    fun autocorrectIsOnByDefaultAndSavedChoiceIsReadBack() = runTest {
+        val repository = repository()
+        assertTrue(repository.settings.first().autocorrectEnabled)
+        repository.setAutocorrectEnabled(false)
+        assertFalse(repository.settings.first().autocorrectEnabled)
+    }
+
+    @Test
+    fun ignoredCorrectionsAreCollectedWithoutDuplicatesAndCanBeCleared() = runTest {
+        val repository = repository()
+        assertTrue(repository.settings.first().ignoredCorrections.isEmpty())
+        repository.addIgnoredCorrection("teh")
+        repository.addIgnoredCorrection("teh")
+        repository.addIgnoredCorrection("dont")
+        assertEquals(setOf("teh", "dont"), repository.settings.first().ignoredCorrections)
+        repository.clearIgnoredCorrections()
+        assertTrue(repository.settings.first().ignoredCorrections.isEmpty())
+    }
 }

@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import java.io.IOException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -23,6 +24,8 @@ class SettingsRepository internal constructor(private val store: DataStore<Prefe
                 hapticsEnabled = preferences[HAPTICS_ENABLED] ?: DEFAULTS.hapticsEnabled,
                 languageId = preferences[LANGUAGE_ID] ?: DEFAULTS.languageId,
                 incognitoEnabled = preferences[INCOGNITO_ENABLED] ?: DEFAULTS.incognitoEnabled,
+                autocorrectEnabled = preferences[AUTOCORRECT_ENABLED] ?: DEFAULTS.autocorrectEnabled,
+                ignoredCorrections = preferences[IGNORED_CORRECTIONS] ?: DEFAULTS.ignoredCorrections,
             )
         }
 
@@ -38,10 +41,25 @@ class SettingsRepository internal constructor(private val store: DataStore<Prefe
         store.edit { it[INCOGNITO_ENABLED] = enabled }
     }
 
+    suspend fun setAutocorrectEnabled(enabled: Boolean) {
+        store.edit { it[AUTOCORRECT_ENABLED] = enabled }
+    }
+
+    /** Remembers that the user wants [word] left alone. */
+    suspend fun addIgnoredCorrection(word: String) {
+        store.edit { it[IGNORED_CORRECTIONS] = (it[IGNORED_CORRECTIONS] ?: emptySet()) + word }
+    }
+
+    suspend fun clearIgnoredCorrections() {
+        store.edit { it.remove(IGNORED_CORRECTIONS) }
+    }
+
     private companion object {
         val HAPTICS_ENABLED = booleanPreferencesKey("haptics_enabled")
         val LANGUAGE_ID = stringPreferencesKey("language_id")
         val INCOGNITO_ENABLED = booleanPreferencesKey("incognito_enabled")
+        val AUTOCORRECT_ENABLED = booleanPreferencesKey("autocorrect_enabled")
+        val IGNORED_CORRECTIONS = stringSetPreferencesKey("ignored_corrections")
         val DEFAULTS = KeyboardSettings()
     }
 }
