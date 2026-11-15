@@ -19,22 +19,30 @@ internal class InputConnectionEditor(
         connection()?.commitText(text, CURSOR_AFTER_TEXT)
     }
 
-    override fun deleteBackward() {
-        val input = connection() ?: return
-        if (input.getSelectedText(0).isNullOrEmpty()) {
-            // Code points, so emoji and other surrogate pairs are removed whole.
-            input.deleteSurroundingTextInCodePoints(1, 0)
-        } else {
-            input.commitText("", CURSOR_AFTER_TEXT)
-        }
-    }
-
     override fun setComposingText(text: String) {
         connection()?.setComposingText(text, CURSOR_AFTER_TEXT)
     }
 
     override fun finishComposing() {
         connection()?.finishComposingText()
+    }
+
+    override fun replaceBeforeCursor(deleteLength: Int, text: String) {
+        val input = connection() ?: return
+        input.beginBatchEdit()
+        input.deleteSurroundingText(deleteLength, 0)
+        input.commitText(text, CURSOR_AFTER_TEXT)
+        input.endBatchEdit()
+    }
+
+    override fun deleteBackward() {
+        val input = connection() ?: return
+        if (input.getSelectedText(NO_FLAGS).isNullOrEmpty()) {
+            // Code points, so emoji and other surrogate pairs are removed whole.
+            input.deleteSurroundingTextInCodePoints(1, 0)
+        } else {
+            input.commitText("", CURSOR_AFTER_TEXT)
+        }
     }
 
     override fun textBeforeCursor(length: Int): String? =
@@ -59,7 +67,7 @@ internal class InputConnectionEditor(
         /** commitText argument: put the cursor right after the inserted text. */
         const val CURSOR_AFTER_TEXT = 1
 
-        /** getTextBeforeCursor argument: no special flags. */
+        /** getTextBeforeCursor and getSelectedText argument: no special flags. */
         const val NO_FLAGS = 0
     }
 }

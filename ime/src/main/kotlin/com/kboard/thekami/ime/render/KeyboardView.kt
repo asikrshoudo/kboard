@@ -12,11 +12,11 @@ import com.kboard.thekami.engine.layout.PlacedKey
 import kotlin.math.roundToInt
 
 /**
- * Shows a [KeyboardLayout] and reports touches to a [KeyListener]. Keys fire
- * on touch-down for the lowest latency, and every finger is tracked so fast
- * two-thumb typing works. A transparent strip above the keys holds previews.
- * All pages have the same number of rows, so switching pages never changes
- * the keyboard height.
+ * Shows a [KeyboardLayout] with a suggestion strip above it and reports
+ * touches to a [KeyListener]. Keys fire on touch-down for the lowest latency,
+ * and every finger is tracked so fast two-thumb typing works. The area above
+ * the strip is transparent and holds key previews. All pages have the same
+ * number of rows, so switching pages never changes the keyboard height.
  */
 // ViewConstructor: created in code only. ClickableViewAccessibility: touch
 // exploration support is not implemented yet.
@@ -28,27 +28,33 @@ internal class KeyboardView(
 ) : View(context) {
     private val style = KeyboardStyle(context)
     private val painter = KeyboardPainter(style)
+    private val strip = SuggestionStrip(this, style)
     private val repeater = KeyRepeater(this, listener)
     private val heldKeys = SparseArray<PlacedKey>()
     private var layout = initialLayout
     private var placedKeys: List<PlacedKey> = emptyList()
     private var contentWidth = 0f
-    private var shiftActive = false
 
-    /** Height of the transparent strip above the keys, in pixels. */
-    val previewHeadroom: Int get() = style.previewHeadroom
+    var shiftActive: Boolean = false
+        set(value) {
+            if (field == value) return
+            field = value
+            invalidate()
+        }
 
-    fun setShiftActive(active: Boolean) {
-        if (shiftActive == active) return
-        shiftActive = active
-        invalidate()
-    }
+    /** Text shown on the space bar, normally the name of the current language. */
+    var spaceLabel: String = ""
+        set(value) {
+            if (field == value) return
+            field = value
+            painter.spaceLabel = value
+            invalidate()
+        }
 
-    fun setSpaceLabel(label: String) {
-        if (painter.spaceLabel == label) return
-        painter.spaceLabel = label
-        invalidate()
-    }
+    /** Height of the transparent area above the strip. The app below is not covered by it. */
+    val overlayHeight: Int get() = style.previewHeadroom - style.stripHeight
+
+    fun setSuggestions(texts: List<String>) = strip.setSuggestions(texts)
 
     fun setLayout(newLayout: KeyboardLayout) {
         if (newLayout === layout) return
@@ -72,10 +78,11 @@ internal class KeyboardView(
     }
 
     override fun onDraw(canvas: Canvas) {
-        val top = style.previewHeadroom.toFloat()
-        canvas.drawRect(0f, top, width.toFloat(), height.toFloat(), style.backgroundPaint)
+        val keysTop = style.previewHeadroom.toFloat()
+        canvas.drawRect(0f, keysTop - style.stripHeight, width.toFloat(), height.toFloat(), style.backgroundPaint)
+        strip.draw(canvas, width.toFloat())
         val saved = canvas.save()
-        canvas.translate(style.edgePadding, top)
+        canvas.translate(style.edgePadding, keysTop)
         painter.draw(canvas, placedKeys, heldKeys, shiftActive, contentWidth)
         canvas.restoreToCount(saved)
     }
@@ -88,10 +95,11 @@ internal class KeyboardView(
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> press(event, event.actionIndex)
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> release(event.getPointerId(event.actionIndex))
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> release(event, event.actionIndex)
             MotionEvent.ACTION_CANCEL -> {
                 heldKeys.clear()
                 repeater.stop()
+                strip.cancelTouch()
                 invalidate()
             }
         }
@@ -104,17 +112,20 @@ internal class KeyboardView(
     }
 
     private fun press(event: MotionEvent, index: Int) {
-        val x = event.getX(index) - style.edgePadding
-        val y = event.getY(index) - style.previewHeadroom
-        val placed = LayoutGeometry.keyAt(placedKeys, x, y) ?: return
+        val x = event.getX(index)
+        val y = event.getY(index)
         val pointerId = event.getPointerId(index)
+        if (strip.touchDown(pointerId, x, y, width.toFloat())) return
+        val placed = LayoutGeometry.keyAt(placedKeys, x - style.edgePadding, y - style.previewHeadroom) ?: return
         heldKeys.put(pointerId, placed)
         invalidate()
         listener.onKeyPress(placed.key)
         repeater.start(pointerId, placed.key)
     }
 
-    private fun release(pointerId: Int) {
+    private fun release(event: MotionEvent, index: Int) {
+        val pointerId = event.getPointerId(index)
+        strip.touchUp(pointerId, event.getX(index), width.toFloat())?.let { listener.onSuggestionPick(it) }
         heldKeys.remove(pointerId)
         repeater.stopIfHeldBy(pointerId)
         invalidate()

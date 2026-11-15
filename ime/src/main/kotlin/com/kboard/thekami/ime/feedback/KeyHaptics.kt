@@ -8,8 +8,9 @@ import com.kboard.thekami.engine.layout.Key
 
 /**
  * Gives each kind of key its own vibration: a light tick for characters,
- * softer for space, sharper for backspace and firmest for enter. The values
- * are the Pulse constants below so they can be tuned on a real device.
+ * softer for space, sharper for backspace and firmest for enter, and a soft
+ * confirmation for a chosen suggestion. The values are the Pulse constants
+ * below so they can be tuned on a real device.
  */
 internal class KeyHaptics(context: Context) {
     private val vibrator: Vibrator? =
@@ -17,8 +18,13 @@ internal class KeyHaptics(context: Context) {
     private val hasAmplitudeControl = vibrator?.hasAmplitudeControl() == true
 
     fun perform(key: Key) {
+        pulseFor(key)?.let(::vibrate)
+    }
+
+    fun suggestionSelected() = vibrate(SUGGESTION)
+
+    private fun vibrate(pulse: Pulse) {
         val device = vibrator ?: return
-        val pulse = pulseFor(key) ?: return
         val amplitude = if (hasAmplitudeControl) pulse.amplitude else VibrationEffect.DEFAULT_AMPLITUDE
         device.vibrate(VibrationEffect.createOneShot(pulse.durationMs, amplitude))
     }
@@ -50,5 +56,6 @@ internal class KeyHaptics(context: Context) {
         val SPACE = Pulse(durationMs = 16, amplitude = 50)
         val BACKSPACE = Pulse(durationMs = 20, amplitude = 110)
         val ENTER = Pulse(durationMs = 26, amplitude = 150)
+        val SUGGESTION = Pulse(durationMs = 10, amplitude = 40)
     }
 }

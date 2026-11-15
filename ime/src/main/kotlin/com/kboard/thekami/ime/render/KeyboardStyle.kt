@@ -2,6 +2,7 @@ package com.kboard.thekami.ime.render
 
 import android.content.Context
 import android.graphics.Paint
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import com.kboard.thekami.engine.layout.ControlAction
 import com.kboard.thekami.ime.R
@@ -19,10 +20,14 @@ internal class KeyboardStyle(context: Context) {
     val cornerRadius: Float = resources.getDimension(R.dimen.kb_key_corner_radius)
     val iconHalfSize: Int = (resources.getDimension(R.dimen.kb_icon_size) / 2f).roundToInt()
 
-    /** Height of the transparent strip above the keys, in pixels. */
+    /** Height of the transparent area above the keys; the suggestion strip fills its lower part. */
     val previewHeadroom: Int = resources.getDimensionPixelSize(R.dimen.kb_preview_headroom)
     val previewHeight: Float = resources.getDimension(R.dimen.kb_preview_height)
     val previewCornerRadius: Float = resources.getDimension(R.dimen.kb_preview_corner_radius)
+
+    val stripHeight: Int = resources.getDimensionPixelSize(R.dimen.kb_strip_height)
+    val stripShift: Float = resources.getDimension(R.dimen.kb_strip_shift)
+    val stripAnimationMs: Long = resources.getInteger(R.integer.kb_strip_animation_ms).toLong()
 
     val backgroundPaint: Paint = fill(context.getColor(R.color.kb_background))
     val keyPaint: Paint = fill(context.getColor(R.color.kb_key))
@@ -34,9 +39,12 @@ internal class KeyboardStyle(context: Context) {
     val textPaint: Paint = textPaint(R.dimen.kb_text_size)
     val previewTextPaint: Paint = textPaint(R.dimen.kb_preview_text_size)
     val labelPaint: Paint = textPaint(R.dimen.kb_label_text_size)
+    val stripPaint: Paint = textPaint(R.dimen.kb_strip_text_size)
+    val stripPrimaryPaint: Paint = textPaint(R.dimen.kb_strip_text_size).apply { typeface = Typeface.DEFAULT_BOLD }
     val textBaselineOffset: Float = baselineOffset(textPaint)
     val previewTextBaselineOffset: Float = baselineOffset(previewTextPaint)
     val labelBaselineOffset: Float = baselineOffset(labelPaint)
+    val stripBaselineOffset: Float = baselineOffset(stripPaint)
 
     private val icons: Map<ControlAction, Drawable> = mapOf(
         ControlAction.SHIFT to icon(context, R.drawable.kb_ic_shift),
