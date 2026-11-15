@@ -18,9 +18,17 @@
     <string name="haptics_title">Vibrate on keypress</string>
     <string name="haptics_description">Each kind of key has its own vibration.</string>
 
+    <string name="learning_title">Learning</string>
+    <string name="incognito_title">Incognito mode</string>
+    <string name="incognito_description">Kboard stops learning from what you type while this is on.</string>
+    <string name="reset_title">Reset learned data</string>
+    <string name="reset_description">Deletes every word Kboard has learned. This cannot be undone.</string>
+    <string name="reset_confirm">Delete</string>
+    <string name="reset_cancel">Cancel</string>
+
     <string name="try_title">Try it</string>
     <string name="try_label">Type here</string>
 
     <string name="privacy_title">Privacy</string>
-    <string name="privacy_body">Kboard has no internet permission. What you type is never stored, logged or sent anywhere. Learning and personal suggestions are not built yet; when they arrive they will stay on your phone.</string>
+    <string name="privacy_body">Kboard has no internet permission, so nothing you type can leave your phone. It remembers the words you use to suggest them again, and keeps them only on this phone. It never learns in password, email or web address fields, or in incognito mode. You can delete everything it learned at any time.</string>
 </resources>

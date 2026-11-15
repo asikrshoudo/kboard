@@ -1,8 +1,10 @@
 package com.kboard.thekami.di
 
 import android.content.Context
+import com.kboard.thekami.data.learning.createWordStore
 import com.kboard.thekami.data.settings.SettingsRepository
 import com.kboard.thekami.data.settings.createSettingsRepository
+import com.kboard.thekami.engine.suggest.WordStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,4 +19,8 @@ object SettingsModule {
     @Singleton
     fun provideSettingsRepository(@ApplicationContext context: Context): SettingsRepository =
         createSettingsRepository(context)
+
+    @Provides
+    @Singleton
+    fun provideWordStore(@ApplicationContext context: Context): WordStore = createWordStore(context)
 }

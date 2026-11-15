@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import com.kboard.thekami.setup.KeyboardStatus
+import com.kboard.thekami.ui.HomeActions
 import com.kboard.thekami.ui.HomeScreen
 import com.kboard.thekami.ui.SettingsViewModel
 import com.kboard.thekami.ui.theme.KboardTheme
@@ -25,10 +26,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val status = KeyboardStatus(this)
+        val actions = HomeActions(
+            onHapticsChange = viewModel::setHapticsEnabled,
+            onIncognitoChange = viewModel::setIncognitoEnabled,
+            onResetLearning = viewModel::resetLearnedData,
+        )
         setContent {
             KboardTheme {
                 val settings by viewModel.settings.collectAsState()
-                HomeScreen(status, resumeCount, settings, viewModel::setHapticsEnabled)
+                HomeScreen(status, resumeCount, settings, actions)
             }
         }
     }

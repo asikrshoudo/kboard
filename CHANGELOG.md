@@ -27,3 +27,8 @@ had a public release yet.
 - Language switching with a globe key (language shown on the space bar and
   remembered). Bangla (Bangladesh) phonetic typing in the Avro style, with
   conjuncts, vowel signs, anusvara and the dari (।) as the full stop.
+- Suggestion strip with an animated crossfade, on-device learning (word
+  frequency, recency and word pairs, stored with Room), Bangla spelling
+  alternatives and mixed Bangla-English typing, incognito mode, and a button
+  to delete everything learned. No learning or suggestions in password, email
+  and web address fields.

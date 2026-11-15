@@ -14,6 +14,7 @@ What exists today:
 - Gradle build (Kotlin DSL, version catalog, pinned toolchain)
 - `:app` (Hilt application class), `:engine` (layout, geometry and input logic, with tests) and `:ime` (keyboard service and Canvas view)
 - English (US) QWERTY keyboard: shift, backspace with hold-to-repeat, key previews and per-key haptics
+- Suggestion strip: on-device learning of your words (frequency, recency, word pairs), Bangla spelling alternatives, animated suggestion changes; incognito mode and reset in the app
 - Companion app (Material 3): setup guide, haptics setting, typing test field
 - Number and symbol pages (including the Taka sign), sentence auto-capitalization where the field asks for it
 - Bangla (phonetic, Avro-style) and English (US), switched with the globe key; the current language is shown on the space bar
@@ -38,7 +39,7 @@ prediction, autocorrect, key sounds and most settings.
 
 Today: the only permission requested is VIBRATE (key haptics), with no internet
 access, and cloud backup is disabled. Typed text is only committed to the text field:
-it is not stored, logged or sent anywhere.
+It never learns in password, email or web address fields or in incognito mode, and you can delete everything it learned from the app.
 
 These are design rules for all future code: offline-first, no account, no
 analytics, no typed text leaves the device. See [ARCHITECTURE.md](ARCHITECTURE.md).

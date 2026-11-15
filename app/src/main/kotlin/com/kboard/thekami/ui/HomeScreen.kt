@@ -18,6 +18,13 @@ import com.kboard.thekami.R
 import com.kboard.thekami.data.settings.KeyboardSettings
 import com.kboard.thekami.setup.KeyboardStatus
 
+/** What the user can change on the home screen. */
+class HomeActions(
+    val onHapticsChange: (Boolean) -> Unit,
+    val onIncognitoChange: (Boolean) -> Unit,
+    val onResetLearning: () -> Unit,
+)
+
 /**
  * The only screen. [refreshKey] changes every time the app returns to the
  * foreground, so the setup steps re-check the system state.
@@ -27,7 +34,7 @@ fun HomeScreen(
     status: KeyboardStatus,
     refreshKey: Int,
     settings: KeyboardSettings,
-    onHapticsChange: (Boolean) -> Unit,
+    actions: HomeActions,
 ) {
     val enabled = remember(refreshKey) { status.isEnabled() }
     val selected = remember(refreshKey) { status.isSelected() }
@@ -44,7 +51,8 @@ fun HomeScreen(
             Text(text = stringResource(R.string.app_name), style = MaterialTheme.typography.headlineLarge)
             Text(text = stringResource(R.string.tagline), style = MaterialTheme.typography.bodyLarge)
             SetupCard(enabled, selected, status::openInputSettings, status::showPicker)
-            TypingCard(settings.hapticsEnabled, onHapticsChange)
+            TypingCard(settings.hapticsEnabled, actions.onHapticsChange)
+            LearningCard(settings.incognitoEnabled, actions.onIncognitoChange, actions.onResetLearning)
             TryItCard()
             PrivacyCard()
         }

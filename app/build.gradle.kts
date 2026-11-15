@@ -58,6 +58,7 @@ android {
 dependencies {
     implementation(project(":ime"))
     implementation(project(":data"))
+    implementation(project(":engine"))
     implementation(libs.coroutines.core)
 
     implementation(platform(libs.compose.bom))

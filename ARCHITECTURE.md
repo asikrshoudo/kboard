@@ -28,7 +28,7 @@ Base package: `com.kboard.thekami`.
 - **Threading:** committing a keypress happens on the main thread with
   minimal work. Prediction runs on a background dispatcher and is cancelled
   when a newer key arrives.
-- **Learning:** unigram and bigram counts with recency decay, stored locally.
+- **Learning (implemented):** unigram and bigram counts with recency decay, stored locally.
   Learning is off in password fields, when the editor asks for no
   personalized learning, and in incognito mode.
 - **Testability (implemented):** text commit and cursor logic sit behind a small interface
@@ -66,3 +66,36 @@ consonants form conjuncts (`rokto` রক্ত), `o` is the inherent vowel and 
 
 Not implemented yet: ঃ ঁ ৎ, Bangla digits, suggestions and alternatives for
 ambiguous spellings, long-press popups, the traditional (non-phonetic) layout.
+
+## Suggestions and learning (implemented, first version)
+
+- `WordStore` (in `:engine`) is the only thing the engine knows about storage.
+  `:data` implements it with Room: one table of words (uses, last used) and
+  one of word pairs. Words are stored in lowercase, and everything stays in the
+  app's private storage. Cloud backup is off.
+- `WordContext` finds the current and the previous word in the text before
+  the cursor. A comma or full stop ends the sentence context.
+- `Ranker` scores by use count with a gentle recency decay (half-life 30
+  days, never below a quarter of the score). A word that followed the previous
+  word before counts double.
+- `SuggestionProvider` completes the word being typed or predicts the next
+  word. While a Bangla word is being typed it offers the default spelling, the
+  best alternative (a spelling you used before first, then single-letter
+  variants such as o/O, i/I, t/T) and the Latin text for mixed typing.
+- Suggestions are shown in `SuggestionStrip` (Canvas, inside the keyboard
+  view). A change crossfades with a small horizontal shift, and is instant
+  when system animations are off.
+
+Privacy rules (`LearningPolicy`, `EditorTraits`, unit-tested):
+
+- Password, email address and web address fields: no learning, no suggestions.
+- A field that sets `IME_FLAG_NO_PERSONALIZED_LEARNING`: no learning.
+- Incognito mode (a setting in the app): no learning, suggestions still shown.
+- Only words of 2-32 letters are learned; digits are never learned.
+- The app can delete everything that was learned.
+
+Known limits: no built-in dictionary, so English suggestions start empty and
+come only from your own typing. No autocorrect yet. The database is not
+pruned yet and the schema is not exported yet (do both before the first
+public release). The Room store is not unit-tested because it needs a device;
+the logic around it is tested in `:engine`.
