@@ -1,5 +1,6 @@
 package com.kboard.thekami.engine.layout
 
+import com.kboard.thekami.engine.language.Language
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
@@ -17,7 +18,8 @@ class SymbolLayoutsTest {
 
     @Test
     fun pagesHaveTheSameRowCountSoTheKeyboardKeepsItsHeight() {
-        pages.forEach { assertEquals(EnglishUsLayout.letters.rows.size, it.rows.size) }
+        val letterRows = Layouts.letters(Language.ENGLISH_US).rows.size
+        pages.forEach { assertEquals(letterRows, it.rows.size) }
     }
 
     @Test
@@ -32,9 +34,11 @@ class SymbolLayoutsTest {
 
     @Test
     fun layoutForReturnsThePageOfEachLayer() {
-        assertSame(EnglishUsLayout.letters, EnglishUsLayout.layoutFor(Layer.LETTERS))
-        assertSame(SymbolLayouts.symbols, EnglishUsLayout.layoutFor(Layer.SYMBOLS))
-        assertSame(SymbolLayouts.moreSymbols, EnglishUsLayout.layoutFor(Layer.MORE_SYMBOLS))
+        Language.entries.forEach { language ->
+            assertSame(Layouts.letters(language), Layouts.layoutFor(language, Layer.LETTERS))
+            assertSame(SymbolLayouts.symbols, Layouts.layoutFor(language, Layer.SYMBOLS))
+            assertSame(SymbolLayouts.moreSymbols, Layouts.layoutFor(language, Layer.MORE_SYMBOLS))
+        }
     }
 
     private fun typedTexts(layout: KeyboardLayout): List<String> =

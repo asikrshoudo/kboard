@@ -1,12 +1,13 @@
 package com.kboard.thekami.engine.layout
 
+import com.kboard.thekami.engine.language.Language
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class LayoutGeometryTest {
-    private val placed = LayoutGeometry.place(EnglishUsLayout.letters, WIDTH, HEIGHT)
+    private val placed = LayoutGeometry.place(Layouts.letters(Language.ENGLISH_US), WIDTH, HEIGHT)
 
     @Test
     fun placesEveryRealKeyAndNoSpacers() {
@@ -54,7 +55,7 @@ class LayoutGeometryTest {
         const val HEIGHT = 400f
         const val ROW_HEIGHT = 100f
         const val TOLERANCE = 0.001f
-        const val KEY_COUNT = 33 // 10 + 9 + 9 + 5 keys per row, spacers excluded
-        const val SPACE_TO_COMMA = 4.5f
+        const val KEY_COUNT = 34 // 10 + 9 + 9 + 6 keys per row, spacers excluded
+        const val SPACE_TO_COMMA = 3.5f
     }
 }
