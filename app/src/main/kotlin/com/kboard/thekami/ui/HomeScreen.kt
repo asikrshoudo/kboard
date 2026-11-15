@@ -18,13 +18,6 @@ import com.kboard.thekami.R
 import com.kboard.thekami.data.settings.KeyboardSettings
 import com.kboard.thekami.setup.KeyboardStatus
 
-/** What the user can change on the home screen. */
-class HomeActions(
-    val onHapticsChange: (Boolean) -> Unit,
-    val onAutocorrectChange: (Boolean) -> Unit,
-    val onIncognitoChange: (Boolean) -> Unit,
-    val onResetLearning: () -> Unit,
-)
 
 /**
  * The only screen. [refreshKey] changes every time the app returns to the
