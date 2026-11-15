@@ -4,5 +4,6 @@
     <color name="kb_key">#FF2B2930</color>
     <color name="kb_control_key">#FF211F26</color>
     <color name="kb_key_pressed">#FF49454F</color>
+    <color name="kb_preview">#FF3E4759</color>
     <color name="kb_text">#FFE6E1E5</color>
 </resources>

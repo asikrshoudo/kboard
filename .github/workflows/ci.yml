@@ -23,7 +23,20 @@ jobs:
           distribution: temurin
           java-version: "21"
       - uses: gradle/actions/setup-gradle@v4
+      # Pushes sign the debug APK with the project key so installed builds can
+      # be updated in place. Pull requests from forks get no secrets and fall
+      # back to the default debug key.
+      - name: Decode signing key
+        if: github.event_name == 'push'
+        env:
+          KEYSTORE_B64: ${{ secrets.KBOARD_KEYSTORE_B64 }}
+        run: |
+          echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/kboard.p12"
+          echo "KBOARD_KEYSTORE_PATH=$RUNNER_TEMP/kboard.p12" >> "$GITHUB_ENV"
       - name: Build debug APK, run unit tests, Lint and Detekt
+        env:
+          KBOARD_KEYSTORE_PASSWORD: ${{ secrets.KBOARD_KEYSTORE_PASSWORD }}
+          KBOARD_KEY_ALIAS: ${{ secrets.KBOARD_KEY_ALIAS }}
         run: ./gradlew assembleDebug check
       - uses: actions/upload-artifact@v4
         with:

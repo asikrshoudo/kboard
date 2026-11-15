@@ -7,17 +7,18 @@ privacy-first Android keyboard by [TheKami](https://www.thekami.tech).
 
 ## Status
 
-**Pre-alpha. There is no keyboard to type with yet.**
+**Pre-alpha. A basic English (US) keyboard works on a real device; most features are missing.**
 
 What exists today:
 
 - Gradle build (Kotlin DSL, version catalog, pinned toolchain)
-- `:app` module with a Hilt application class, and an empty `:engine` module
+- `:app` (Hilt application class), `:engine` (layout, geometry and input logic, with tests) and `:ime` (keyboard service and Canvas view)
+- English (US) QWERTY keyboard: shift, backspace with hold-to-repeat, key previews and per-key haptics
 - GitHub Actions: build, unit tests, Lint and Detekt on every push
 - Signed APK and AAB release pipeline
 
-What does not exist yet: the keyboard service, layouts, languages,
-prediction, autocorrect, haptics, sounds, the companion app UI.
+What does not exist yet: other languages, number and symbol layers,
+prediction, autocorrect, key sounds, settings, the companion app UI.
 
 ## Planned goals (not implemented)
 
@@ -32,9 +33,9 @@ prediction, autocorrect, haptics, sounds, the companion app UI.
 
 ## Privacy
 
-Today: the app manifest requests no permissions (in particular no internet
-access) and disables cloud backup. No code reads or stores typed text yet,
-because there is no keyboard yet.
+Today: the only permission requested is VIBRATE (key haptics), with no internet
+access, and cloud backup is disabled. Typed text is only committed to the text field:
+it is not stored, logged or sent anywhere.
 
 These are design rules for all future code: offline-first, no account, no
 analytics, no typed text leaves the device. See [ARCHITECTURE.md](ARCHITECTURE.md).

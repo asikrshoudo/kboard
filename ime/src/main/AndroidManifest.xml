@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Key haptics only. The keyboard never requests network access. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application>
         <service
             android:name=".service.KboardImeService"

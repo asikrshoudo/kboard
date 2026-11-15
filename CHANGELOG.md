@@ -15,3 +15,6 @@ had a public release yet.
 - Documentation: README, ARCHITECTURE, CONTRIBUTING, CODE_OF_CONDUCT, SECURITY and decision records.
 - Keyboard service with an English (US) QWERTY layout: letters, shift,
   space, backspace, enter, comma and period. Not yet tested on a device.
+- Key previews, backspace hold-to-repeat and per-key haptics (adds the
+  `VIBRATE` permission). CI debug builds on pushes are signed with the
+  project key so installed builds can be updated in place.

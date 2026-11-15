@@ -20,7 +20,7 @@ Base package: `com.kboard.thekami`.
 
 ## Design decisions (Planned)
 
-- **Keyboard surface:** custom `View` drawn with Canvas, not Compose. Key
+- **Keyboard surface (implemented):** custom `View` drawn with Canvas, not Compose. Key
   rectangles are precomputed and `onDraw` allocates nothing. Compose is for
   the companion app only.
 - **Suggestion animation:** platform `ViewPropertyAnimator` with crossfade
@@ -31,12 +31,12 @@ Base package: `com.kboard.thekami`.
 - **Learning:** unigram and bigram counts with recency decay, stored locally.
   Learning is off in password fields, when the editor asks for no
   personalized learning, and in incognito mode.
-- **Testability:** text commit and cursor logic sit behind a small interface
+- **Testability (implemented):** text commit and cursor logic sit behind a small interface
   so it can be tested on the JVM with a fake input connection.
 
 ## Privacy
 
-Implemented: the manifest declares no permissions and `allowBackup` is false.
+Implemented: the only permission is `VIBRATE` (key haptics), there is no `INTERNET` permission, and `allowBackup` is false.
 
 Planned: a CI check that fails the build if the manifest ever requests
 `INTERNET`. This is **not** enforced yet.
