@@ -1,4 +1,3 @@
-@file:Suppress("MatchingDeclarationName")
 package com.kboard.thekami.ui
 
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +21,7 @@ import com.kboard.thekami.setup.KeyboardStatus
 /** What the user can change on the home screen. */
 class HomeActions(
     val onHapticsChange: (Boolean) -> Unit,
+    val onAutocorrectChange: (Boolean) -> Unit,
     val onIncognitoChange: (Boolean) -> Unit,
     val onResetLearning: () -> Unit,
 )
@@ -52,7 +52,12 @@ fun HomeScreen(
             Text(text = stringResource(R.string.app_name), style = MaterialTheme.typography.headlineLarge)
             Text(text = stringResource(R.string.tagline), style = MaterialTheme.typography.bodyLarge)
             SetupCard(enabled, selected, status::openInputSettings, status::showPicker)
-            TypingCard(settings.hapticsEnabled, actions.onHapticsChange)
+            TypingCard(
+                hapticsEnabled = settings.hapticsEnabled,
+                autocorrectEnabled = settings.autocorrectEnabled,
+                onHapticsChange = actions.onHapticsChange,
+                onAutocorrectChange = actions.onAutocorrectChange,
+            )
             LearningCard(settings.incognitoEnabled, actions.onIncognitoChange, actions.onResetLearning)
             TryItCard()
             PrivacyCard()

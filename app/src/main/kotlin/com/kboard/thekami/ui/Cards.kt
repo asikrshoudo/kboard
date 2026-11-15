@@ -14,13 +14,24 @@ import androidx.compose.ui.res.stringResource
 import com.kboard.thekami.R
 
 @Composable
-fun TypingCard(hapticsEnabled: Boolean, onHapticsChange: (Boolean) -> Unit) {
+fun TypingCard(
+    hapticsEnabled: Boolean,
+    autocorrectEnabled: Boolean,
+    onHapticsChange: (Boolean) -> Unit,
+    onAutocorrectChange: (Boolean) -> Unit,
+) {
     SectionCard(title = stringResource(R.string.typing_title)) {
         SwitchRow(
             title = stringResource(R.string.haptics_title),
             description = stringResource(R.string.haptics_description),
             checked = hapticsEnabled,
             onCheckedChange = onHapticsChange,
+        )
+        SwitchRow(
+            title = stringResource(R.string.autocorrect_title),
+            description = stringResource(R.string.autocorrect_description),
+            checked = autocorrectEnabled,
+            onCheckedChange = onAutocorrectChange,
         )
     }
 }

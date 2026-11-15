@@ -28,6 +28,7 @@ class MainActivity : ComponentActivity() {
         val status = KeyboardStatus(this)
         val actions = HomeActions(
             onHapticsChange = viewModel::setHapticsEnabled,
+            onAutocorrectChange = viewModel::setAutocorrectEnabled,
             onIncognitoChange = viewModel::setIncognitoEnabled,
             onResetLearning = viewModel::resetLearnedData,
         )

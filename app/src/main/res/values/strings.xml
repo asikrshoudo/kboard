@@ -17,6 +17,8 @@
     <string name="typing_title">Typing</string>
     <string name="haptics_title">Vibrate on keypress</string>
     <string name="haptics_description">Each kind of key has its own vibration.</string>
+    <string name="autocorrect_title">Autocorrect</string>
+    <string name="autocorrect_description">Fixes well-known English typing mistakes as you type. Press backspace right after a correction to undo it, and that word is never changed again.</string>
 
     <string name="learning_title">Learning</string>
     <string name="incognito_title">Incognito mode</string>
@@ -30,5 +32,5 @@
     <string name="try_label">Type here</string>
 
     <string name="privacy_title">Privacy</string>
-    <string name="privacy_body">Kboard has no internet permission, so nothing you type can leave your phone. It remembers the words you use to suggest them again, and keeps them only on this phone. It never learns in password, email or web address fields, or in incognito mode. You can delete everything it learned at any time.</string>
+    <string name="privacy_body">Kboard has no internet permission, so nothing you type can leave your phone. It remembers the words you use to suggest them again, and keeps them only on this phone. It never learns or suggests in password, email or web address fields, and never learns in incognito mode. You can delete everything it learned at any time.</string>
 </resources>

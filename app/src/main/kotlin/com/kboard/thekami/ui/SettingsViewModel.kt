@@ -27,13 +27,20 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch { repository.setHapticsEnabled(enabled) }
     }
 
+    fun setAutocorrectEnabled(enabled: Boolean) {
+        viewModelScope.launch { repository.setAutocorrectEnabled(enabled) }
+    }
+
     fun setIncognitoEnabled(enabled: Boolean) {
         viewModelScope.launch { repository.setIncognitoEnabled(enabled) }
     }
 
-    /** Deletes every learned word and word pair. */
+    /** Deletes every learned word and word pair, and the corrections the user had undone. */
     fun resetLearnedData() {
-        viewModelScope.launch { wordStore.clear() }
+        viewModelScope.launch {
+            wordStore.clear()
+            repository.clearIgnoredCorrections()
+        }
     }
 
     private companion object {
