@@ -4,13 +4,11 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class EnglishUsLayoutTest {
-    private val rows = EnglishUsLayout.layout.rows
+    private val rows = EnglishUsLayout.letters.rows
 
     @Test
     fun everyRowFillsTheSameWidth() {
-        rows.forEach { row ->
-            assertEquals(EnglishUsLayout.ROW_WEIGHT, row.map { it.weight }.sum(), TOLERANCE)
-        }
+        rows.forEach { row -> assertEquals(ROW_WEIGHT, row.map { it.weight }.sum(), TOLERANCE) }
     }
 
     @Test
@@ -27,9 +25,16 @@ class EnglishUsLayoutTest {
     }
 
     @Test
-    fun hasShiftBackspaceSpaceAndEnter() {
+    fun hasShiftBackspaceSpaceEnterAndSymbolSwitch() {
         val actions = rows.flatten().filterIsInstance<Key.Control>().map { it.action }
-        assertEquals(ControlAction.entries.toSet(), actions.toSet())
+        val expected = setOf(
+            ControlAction.SHIFT,
+            ControlAction.BACKSPACE,
+            ControlAction.SPACE,
+            ControlAction.ENTER,
+            ControlAction.SHOW_SYMBOLS,
+        )
+        assertEquals(expected, actions.toSet())
     }
 
     private companion object {

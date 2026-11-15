@@ -4,7 +4,15 @@ package com.kboard.thekami.engine.layout
 const val DEFAULT_KEY_WEIGHT = 1f
 
 /** Actions of keys that do not type a fixed character. */
-enum class ControlAction { SHIFT, BACKSPACE, ENTER, SPACE }
+enum class ControlAction {
+    SHIFT,
+    BACKSPACE,
+    ENTER,
+    SPACE,
+    SHOW_LETTERS,
+    SHOW_SYMBOLS,
+    SHOW_MORE_SYMBOLS,
+}
 
 sealed interface Key {
     /** Relative width of this key within its row. */

@@ -6,7 +6,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class LayoutGeometryTest {
-    private val placed = LayoutGeometry.place(EnglishUsLayout.layout, WIDTH, HEIGHT)
+    private val placed = LayoutGeometry.place(EnglishUsLayout.letters, WIDTH, HEIGHT)
 
     @Test
     fun placesEveryRealKeyAndNoSpacers() {
@@ -54,7 +54,7 @@ class LayoutGeometryTest {
         const val HEIGHT = 400f
         const val ROW_HEIGHT = 100f
         const val TOLERANCE = 0.001f
-        const val KEY_COUNT = 32 // 10 + 9 + 9 + 4 keys per row, spacers excluded
-        const val SPACE_TO_COMMA = 6f
+        const val KEY_COUNT = 33 // 10 + 9 + 9 + 5 keys per row, spacers excluded
+        const val SPACE_TO_COMMA = 4.5f
     }
 }

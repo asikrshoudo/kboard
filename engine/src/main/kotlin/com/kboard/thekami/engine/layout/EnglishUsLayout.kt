@@ -1,38 +1,23 @@
 package com.kboard.thekami.engine.layout
 
-/** English (US) QWERTY layout. The weights of every row sum to [ROW_WEIGHT]. */
+/** English (US) QWERTY letters page, plus access to the shared symbol pages. */
 object EnglishUsLayout {
-    const val ROW_WEIGHT = 10f
-
-    private const val HALF_KEY = 0.5f
-    private const val WIDE_CONTROL = 1.5f
-    private const val SPACE_BAR = 6f
-    private const val ENTER_WEIGHT = 2f
-
-    val layout = KeyboardLayout(
+    val letters = KeyboardLayout(
         rows = listOf(
-            letters("qwertyuiop"),
+            letterKeys("qwertyuiop"),
             buildList {
                 add(Key.Spacer(HALF_KEY))
-                addAll(letters("asdfghjkl"))
+                addAll(letterKeys("asdfghjkl"))
                 add(Key.Spacer(HALF_KEY))
             },
-            buildList {
-                add(Key.Control(ControlAction.SHIFT, WIDE_CONTROL))
-                addAll(letters("zxcvbnm"))
-                add(Key.Control(ControlAction.BACKSPACE, WIDE_CONTROL))
-            },
-            listOf(
-                punctuation(","),
-                Key.Control(ControlAction.SPACE, SPACE_BAR),
-                punctuation("."),
-                Key.Control(ControlAction.ENTER, ENTER_WEIGHT),
-            ),
+            thirdRow(ControlAction.SHIFT, letterKeys("zxcvbnm")),
+            bottomRow(ControlAction.SHOW_SYMBOLS),
         ),
     )
 
-    private fun letters(chars: String): List<Key> =
-        chars.map { Key.Character(base = it.toString(), shifted = it.uppercase()) }
-
-    private fun punctuation(mark: String): Key = Key.Character(base = mark, shifted = mark)
+    fun layoutFor(layer: Layer): KeyboardLayout = when (layer) {
+        Layer.LETTERS -> letters
+        Layer.SYMBOLS -> SymbolLayouts.symbols
+        Layer.MORE_SYMBOLS -> SymbolLayouts.moreSymbols
+    }
 }

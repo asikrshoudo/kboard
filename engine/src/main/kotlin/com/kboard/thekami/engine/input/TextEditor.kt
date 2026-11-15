@@ -9,4 +9,7 @@ interface TextEditor {
 
     /** Runs the field's action (Send, Search, ...) or inserts a new line. */
     fun performEnter()
+
+    /** Up to [length] characters before the cursor, or null if the field does not share them. */
+    fun textBeforeCursor(length: Int): String?
 }
