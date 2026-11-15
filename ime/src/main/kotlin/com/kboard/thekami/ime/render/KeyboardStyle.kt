@@ -26,8 +26,9 @@ internal class KeyboardStyle(context: Context) {
     val previewCornerRadius: Float = resources.getDimension(R.dimen.kb_preview_corner_radius)
 
     val stripHeight: Int = resources.getDimensionPixelSize(R.dimen.kb_strip_height)
-    val stripShift: Float = resources.getDimension(R.dimen.kb_strip_shift)
+    val stripRise: Float = resources.getDimension(R.dimen.kb_strip_rise)
     val stripAnimationMs: Long = resources.getInteger(R.integer.kb_strip_animation_ms).toLong()
+    val stripStaggerMs: Long = resources.getInteger(R.integer.kb_strip_stagger_ms).toLong()
 
     val backgroundPaint: Paint = fill(context.getColor(R.color.kb_background))
     val keyPaint: Paint = fill(context.getColor(R.color.kb_key))

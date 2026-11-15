@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Length of the suggestion crossfade. -->
+    <!-- How long one suggestion takes to fade. -->
     <integer name="kb_strip_animation_ms">160</integer>
+    <!-- Delay between neighbouring suggestions that change together. -->
+    <integer name="kb_strip_stagger_ms">35</integer>
 </resources>

@@ -43,6 +43,12 @@ class EditorTraitsTest {
     }
 
     @Test
+    fun theNoSuggestionsFlagIsDetectedInTextFields() {
+        assertTrue(EditorTraits.wantsNoSuggestions(text or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS))
+        assertFalse(EditorTraits.wantsNoSuggestions(text))
+    }
+
+    @Test
     fun theOptOutFlagIsDetected() {
         val withFlag = EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING or EditorInfo.IME_ACTION_SEND
         assertTrue(EditorTraits.noPersonalizedLearning(withFlag))

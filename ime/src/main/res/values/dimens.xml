@@ -14,6 +14,7 @@
     <dimen name="kb_preview_corner_radius">12dp</dimen>
     <dimen name="kb_preview_text_size">32sp</dimen>
     <dimen name="kb_strip_height">44dp</dimen>
-    <dimen name="kb_strip_shift">8dp</dimen>
+    <!-- How far a suggestion travels up while it fades in (and the old one fades out). -->
+    <dimen name="kb_strip_rise">4dp</dimen>
     <dimen name="kb_strip_text_size">17sp</dimen>
 </resources>

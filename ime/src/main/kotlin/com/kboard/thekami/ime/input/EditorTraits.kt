@@ -39,6 +39,11 @@ internal object EditorTraits {
         }
     }
 
+    /** True when the app asked for no suggestions or corrections in this field. */
+    fun wantsNoSuggestions(inputType: Int): Boolean =
+        inputClass(inputType) == InputType.TYPE_CLASS_TEXT &&
+            (inputType and InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS) != 0
+
     /** True when the app asked keyboards not to learn from this field. */
     fun noPersonalizedLearning(imeOptions: Int): Boolean =
         (imeOptions and EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING) != 0

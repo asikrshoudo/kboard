@@ -11,6 +11,7 @@ import com.kboard.thekami.engine.language.Language
 import com.kboard.thekami.engine.layout.Key
 import com.kboard.thekami.engine.layout.Layouts
 import com.kboard.thekami.engine.suggest.LearningPolicy
+import com.kboard.thekami.engine.suggest.Seeds
 import com.kboard.thekami.engine.suggest.Suggestion
 import com.kboard.thekami.engine.suggest.SuggestionProvider
 import com.kboard.thekami.engine.suggest.SuggestionRequest
@@ -29,7 +30,8 @@ import kotlinx.coroutines.launch
 
 /**
  * The system-facing keyboard service. Wires the view to input, feedback,
- * settings, suggestions and learning, and applies the privacy rules per field.
+ * settings, suggestions, autocorrect and learning, and applies the privacy
+ * rules for each text field.
  */
 class KboardImeService : InputMethodService() {
     // Main dispatcher: the input handler is only ever touched on the main thread.
@@ -40,19 +42,27 @@ class KboardImeService : InputMethodService() {
     )
     private val wordStore by lazy { createWordStore(applicationContext) }
     private val settingsRepository by lazy { createSettingsRepository(applicationContext) }
-    private val provider by lazy { SuggestionProvider(wordStore, System::currentTimeMillis) }
+    private val provider by lazy { SuggestionProvider(wordStore, Seeds::of, System::currentTimeMillis) }
     private val haptics by lazy { KeyHaptics(this) }
-    private val inputHandler = KeyInputHandler(editor) { previous, word ->
+    private val inputHandler = KeyInputHandler(
+        editor,
+        corrections = { word -> serviceScope.launch { settingsRepository.addIgnoredCorrection(word) } },
+    ) { previous, word ->
         serviceScope.launch { wordStore.record(previous, word, System.currentTimeMillis()) }
     }
 
     private var keyboardView: KeyboardView? = null
     private var suggestions: List<Suggestion> = emptyList()
     private var suggestionJob: Job? = null
+
     private var hapticsEnabled = KeyboardSettings().hapticsEnabled
     private var incognito = KeyboardSettings().incognitoEnabled
+    private var autocorrectEnabled = KeyboardSettings().autocorrectEnabled
+
+    // Facts about the focused text field, set in onStartInputView.
     private var sensitiveField = false
     private var noLearning = false
+    private var noSuggestions = false
 
     private val keyListener = object : KeyListener {
         override fun onKeyPress(key: Key) {
@@ -78,7 +88,9 @@ class KboardImeService : InputMethodService() {
             settingsRepository.settings.collect {
                 hapticsEnabled = it.hapticsEnabled
                 incognito = it.incognitoEnabled
-                updateLearning()
+                autocorrectEnabled = it.autocorrectEnabled
+                inputHandler.ignoredCorrections = it.ignoredCorrections
+                applyFieldRules()
             }
         }
     }
@@ -100,11 +112,12 @@ class KboardImeService : InputMethodService() {
         val inputType = info?.inputType ?: 0
         sensitiveField = EditorTraits.isSensitive(inputType)
         noLearning = EditorTraits.noPersonalizedLearning(info?.imeOptions ?: 0)
+        noSuggestions = EditorTraits.wantsNoSuggestions(inputType)
         inputHandler.start(
             startLayer = EditorTraits.startLayer(inputType),
             autoCapitalize = EditorTraits.wantsSentenceCapitals(inputType),
         )
-        updateLearning()
+        applyFieldRules()
         showCurrentState()
     }
 
@@ -129,9 +142,13 @@ class KboardImeService : InputMethodService() {
         showCurrentState()
     }
 
-    private fun updateLearning() {
+    /** Learning, suggestions and autocorrect each depend on the field and on the user's settings. */
+    private fun applyFieldRules() {
         inputHandler.learningAllowed = LearningPolicy.isLearningAllowed(sensitiveField, noLearning, incognito)
+        inputHandler.autocorrectAllowed = autocorrectEnabled && suggestionsAllowed()
     }
+
+    private fun suggestionsAllowed(): Boolean = LearningPolicy.isSuggestingAllowed(sensitiveField) && !noSuggestions
 
     private fun showCurrentState() {
         val view = keyboardView ?: return
@@ -143,12 +160,13 @@ class KboardImeService : InputMethodService() {
 
     private fun refreshSuggestions(view: KeyboardView) {
         suggestionJob?.cancel()
-        if (!LearningPolicy.isSuggestingAllowed(sensitiveField)) {
+        if (!suggestionsAllowed()) {
             suggestions = emptyList()
             view.setSuggestions(emptyList())
             return
         }
         val request = SuggestionRequest(
+            language = inputHandler.language,
             composingLatin = inputHandler.composingLatin,
             textBeforeCursor = editor.textBeforeCursor(CONTEXT_CHARS).orEmpty(),
         )
