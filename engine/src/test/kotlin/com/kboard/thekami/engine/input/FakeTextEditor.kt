@@ -45,7 +45,8 @@ internal class FakeTextEditor : TextEditor {
         events += "enter"
     }
 
-    override fun textBeforeCursor(length: Int): String? = if (contextAvailable) text.takeLast(length).toString() else null
+    override fun textBeforeCursor(length: Int): String? =
+        if (contextAvailable) text.takeLast(length).toString() else null
 
     private fun replaceComposing(newText: String) {
         text.setLength(text.length - composingLength)
