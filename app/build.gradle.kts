@@ -1,11 +1,12 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
 }
 
-// Release signing material comes from the environment (set by release.yml
-// from GitHub Secrets). Nothing secret lives in the repository.
+// Release signing material comes from the environment (set by CI from
+// GitHub Secrets). Nothing secret lives in the repository.
 val signingKeystore = providers.environmentVariable("KBOARD_KEYSTORE_PATH")
 val signingPassword = providers.environmentVariable("KBOARD_KEYSTORE_PASSWORD")
 val signingAlias = providers.environmentVariable("KBOARD_KEY_ALIAS")
@@ -55,6 +56,15 @@ android {
 
 dependencies {
     implementation(project(":ime"))
+    implementation(project(":data"))
+    implementation(libs.coroutines.core)
+
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.ui)
+    implementation(libs.compose.foundation)
+    implementation(libs.compose.material3)
+    implementation(libs.activity.compose)
+
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 }
