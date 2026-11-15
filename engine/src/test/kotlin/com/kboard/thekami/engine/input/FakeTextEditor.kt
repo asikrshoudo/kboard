@@ -7,15 +7,15 @@ import com.kboard.thekami.engine.layout.Key
 internal class FakeTextEditor : TextEditor {
     val events = mutableListOf<String>()
     var contextAvailable = true
-    private val text = StringBuilder()
+    private val buffer = StringBuilder()
     private var composingLength = 0
 
-    val content: String get() = text.toString()
+    val content: String get() = buffer.toString()
 
     /** Replaces the whole text and ends composing, like the user editing the field. */
     fun setText(value: String) {
-        text.clear()
-        text.append(value)
+        buffer.clear()
+        buffer.append(value)
         composingLength = 0
     }
 
@@ -36,8 +36,15 @@ internal class FakeTextEditor : TextEditor {
         events += "finish"
     }
 
+    override fun replaceBeforeCursor(deleteLength: Int, text: String) {
+        buffer.setLength(buffer.length - deleteLength)
+        buffer.append(text)
+        composingLength = 0
+        events += "replace:$deleteLength:$text"
+    }
+
     override fun deleteBackward() {
-        if (text.isNotEmpty()) text.deleteCharAt(text.lastIndex)
+        if (buffer.isNotEmpty()) buffer.deleteCharAt(buffer.lastIndex)
         events += "delete"
     }
 
@@ -46,11 +53,11 @@ internal class FakeTextEditor : TextEditor {
     }
 
     override fun textBeforeCursor(length: Int): String? =
-        if (contextAvailable) text.takeLast(length).toString() else null
+        if (contextAvailable) buffer.takeLast(length).toString() else null
 
     private fun replaceComposing(newText: String) {
-        text.setLength(text.length - composingLength)
-        text.append(newText)
+        buffer.setLength(buffer.length - composingLength)
+        buffer.append(newText)
     }
 }
 
