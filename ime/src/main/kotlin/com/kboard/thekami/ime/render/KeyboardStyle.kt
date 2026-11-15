@@ -7,7 +7,7 @@ import com.kboard.thekami.engine.layout.ControlAction
 import com.kboard.thekami.ime.R
 import kotlin.math.roundToInt
 
-/** Dimensions, colors, paints and icons for drawing the keyboard, resolved once. */
+/** Dimensions, colors, paints, labels and icons for drawing the keyboard, resolved once. */
 internal class KeyboardStyle(context: Context) {
     private val resources = context.resources
 
@@ -33,8 +33,10 @@ internal class KeyboardStyle(context: Context) {
     private val textColor: Int = context.getColor(R.color.kb_text)
     val textPaint: Paint = textPaint(R.dimen.kb_text_size)
     val previewTextPaint: Paint = textPaint(R.dimen.kb_preview_text_size)
+    val labelPaint: Paint = textPaint(R.dimen.kb_label_text_size)
     val textBaselineOffset: Float = baselineOffset(textPaint)
     val previewTextBaselineOffset: Float = baselineOffset(previewTextPaint)
+    val labelBaselineOffset: Float = baselineOffset(labelPaint)
 
     private val icons: Map<ControlAction, Drawable> = mapOf(
         ControlAction.SHIFT to icon(context, R.drawable.kb_ic_shift),
@@ -42,7 +44,15 @@ internal class KeyboardStyle(context: Context) {
         ControlAction.ENTER to icon(context, R.drawable.kb_ic_enter),
     )
 
+    private val labels: Map<ControlAction, String> = mapOf(
+        ControlAction.SHOW_LETTERS to context.getString(R.string.kb_label_letters),
+        ControlAction.SHOW_SYMBOLS to context.getString(R.string.kb_label_symbols),
+        ControlAction.SHOW_MORE_SYMBOLS to context.getString(R.string.kb_label_more_symbols),
+    )
+
     fun iconFor(action: ControlAction): Drawable? = icons[action]
+
+    fun labelFor(action: ControlAction): String? = labels[action]
 
     private fun fill(color: Int): Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { this.color = color }
 

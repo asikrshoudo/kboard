@@ -9,6 +9,7 @@ import com.kboard.thekami.engine.input.KeyInputHandler
 import com.kboard.thekami.engine.layout.EnglishUsLayout
 import com.kboard.thekami.engine.layout.Key
 import com.kboard.thekami.ime.feedback.KeyHaptics
+import com.kboard.thekami.ime.input.EditorTraits
 import com.kboard.thekami.ime.input.InputConnectionEditor
 import com.kboard.thekami.ime.render.KeyListener
 import com.kboard.thekami.ime.render.KeyboardView
@@ -57,12 +58,16 @@ class KboardImeService : InputMethodService() {
     }
 
     override fun onCreateInputView(): View =
-        KeyboardView(this, EnglishUsLayout.layout, keyListener).also { keyboardView = it }
+        KeyboardView(this, EnglishUsLayout.layoutFor(inputHandler.layer), keyListener)
+            .also { keyboardView = it }
 
     override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
         super.onStartInputView(info, restarting)
-        inputHandler.reset()
-        keyboardView?.setShiftActive(false)
+        inputHandler.start(
+            startLayer = EditorTraits.startLayer(info),
+            autoCapitalize = EditorTraits.wantsSentenceCapitals(info),
+        )
+        showCurrentState()
     }
 
     /**
@@ -78,6 +83,11 @@ class KboardImeService : InputMethodService() {
 
     private fun typeKey(key: Key) {
         inputHandler.onKey(key)
+        showCurrentState()
+    }
+
+    private fun showCurrentState() {
+        keyboardView?.setLayout(EnglishUsLayout.layoutFor(inputHandler.layer))
         keyboardView?.setShiftActive(inputHandler.shifted)
     }
 }

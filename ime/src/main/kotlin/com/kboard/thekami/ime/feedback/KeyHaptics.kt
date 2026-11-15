@@ -26,7 +26,11 @@ internal class KeyHaptics(context: Context) {
     private fun pulseFor(key: Key): Pulse? = when (key) {
         is Key.Character -> CHARACTER
         is Key.Control -> when (key.action) {
-            ControlAction.SHIFT -> SHIFT
+            ControlAction.SHIFT,
+            ControlAction.SHOW_LETTERS,
+            ControlAction.SHOW_SYMBOLS,
+            ControlAction.SHOW_MORE_SYMBOLS,
+            -> SHIFT
             ControlAction.BACKSPACE -> BACKSPACE
             ControlAction.ENTER -> ENTER
             ControlAction.SPACE -> SPACE

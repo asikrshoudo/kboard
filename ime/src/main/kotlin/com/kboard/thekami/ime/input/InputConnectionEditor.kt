@@ -29,6 +29,9 @@ internal class InputConnectionEditor(
         }
     }
 
+    override fun textBeforeCursor(length: Int): String? =
+        connection()?.getTextBeforeCursor(length, NO_FLAGS)?.toString()
+
     override fun performEnter() {
         val input = connection() ?: return
         val options = editorInfo()?.imeOptions ?: 0
@@ -47,5 +50,8 @@ internal class InputConnectionEditor(
     private companion object {
         /** commitText argument: put the cursor right after the inserted text. */
         const val CURSOR_AFTER_TEXT = 1
+
+        /** getTextBeforeCursor argument: no special flags. */
+        const val NO_FLAGS = 0
     }
 }

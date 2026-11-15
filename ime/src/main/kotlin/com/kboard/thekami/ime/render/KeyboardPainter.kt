@@ -41,8 +41,18 @@ internal class KeyboardPainter(private val style: KeyboardStyle) {
                 keyRect.centerY() + style.textBaselineOffset,
                 style.textPaint,
             )
-            is Key.Control -> drawIcon(canvas, key.action)
+            is Key.Control -> drawControl(canvas, key.action)
             is Key.Spacer -> Unit
+        }
+    }
+
+    /** Page-switch keys show a text label; the others show an icon (space shows nothing). */
+    private fun drawControl(canvas: Canvas, action: ControlAction) {
+        val label = style.labelFor(action)
+        if (label != null) {
+            canvas.drawText(label, keyRect.centerX(), keyRect.centerY() + style.labelBaselineOffset, style.labelPaint)
+        } else {
+            drawIcon(canvas, action)
         }
     }
 

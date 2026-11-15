@@ -11,4 +11,5 @@
     <dimen name="kb_preview_height">60dp</dimen>
     <dimen name="kb_preview_corner_radius">12dp</dimen>
     <dimen name="kb_preview_text_size">32sp</dimen>
+    <dimen name="kb_label_text_size">16sp</dimen>
 </resources>

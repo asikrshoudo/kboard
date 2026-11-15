@@ -21,3 +21,6 @@ had a public release yet.
 - Companion app (Jetpack Compose, Material 3, dynamic color): setup guide,
   haptics setting and a typing test field. Settings are stored with
   DataStore in the new `:data` module and read by the keyboard.
+- Number and symbol pages (with the Taka sign), page switching, number and
+  phone fields opening on the symbols page, and sentence auto-capitalization
+  for fields that ask for it.
