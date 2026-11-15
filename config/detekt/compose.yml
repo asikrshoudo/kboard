@@ -1,0 +1,6 @@
+# Merged on top of the default detekt rules for the :app module.
+# Composable functions are named like classes, which is the Compose convention.
+naming:
+  FunctionNaming:
+    ignoreAnnotated:
+      - Composable

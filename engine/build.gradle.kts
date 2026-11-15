@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 // Pure Kotlin/JVM module: no Android dependencies, so its tests run in
 // seconds on CI. Holds language rules, prediction and autocorrect.
 plugins {
+    alias(libs.plugins.detekt)
     alias(libs.plugins.kotlin.jvm)
 }
 
