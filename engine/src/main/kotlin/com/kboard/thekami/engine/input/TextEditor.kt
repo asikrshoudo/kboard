@@ -10,6 +10,9 @@ interface TextEditor {
     /** Turns the composing text into ordinary text. */
     fun finishComposing()
 
+    /** Replaces the [deleteLength] characters before the cursor with [text]. */
+    fun replaceBeforeCursor(deleteLength: Int, text: String)
+
     /** Deletes the selection, or the character before the cursor. */
     fun deleteBackward()
 

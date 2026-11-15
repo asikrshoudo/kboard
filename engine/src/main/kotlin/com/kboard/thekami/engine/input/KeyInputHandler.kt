@@ -5,9 +5,14 @@ import com.kboard.thekami.engine.layout.ControlAction
 import com.kboard.thekami.engine.layout.Key
 import com.kboard.thekami.engine.layout.Layer
 import com.kboard.thekami.engine.phonetic.PhoneticComposer
+import com.kboard.thekami.engine.suggest.Suggestion
+import com.kboard.thekami.engine.suggest.WordContext
 
-/** Turns key presses into edits and tracks shift, the visible page and the language. */
-class KeyInputHandler(private val editor: TextEditor) {
+/**
+ * Turns key presses into edits and tracks shift, the visible page and the
+ * language. Finished words go to the [learner] only while [learningAllowed].
+ */
+class KeyInputHandler(private val editor: TextEditor, learner: WordLearner = WordLearner.None) {
     /** True when the next character is typed in its shifted form. */
     var shifted: Boolean = false
         private set
@@ -20,7 +25,18 @@ class KeyInputHandler(private val editor: TextEditor) {
         private set
 
     private val composer = PhoneticComposer(editor)
+    private val completer = WordCompleter(editor, composer, learner)
     private var autoCapitalize = false
+
+    /** False by default: nothing is learned until the caller has checked the privacy rules. */
+    var learningAllowed: Boolean
+        get() = completer.allowed
+        set(value) {
+            completer.allowed = value
+        }
+
+    /** The Latin letters of the Bangla word being typed, empty when there is none. */
+    val composingLatin: String get() = composer.latin
 
     /** Call when a new text field gets focus. */
     fun start(startLayer: Layer, autoCapitalize: Boolean) {
@@ -47,12 +63,26 @@ class KeyInputHandler(private val editor: TextEditor) {
         }
     }
 
+    /** Puts the suggestion in place of the word being typed, followed by a space. */
+    fun acceptSuggestion(suggestion: Suggestion) {
+        if (composer.isComposing) {
+            composer.replaceWith(suggestion.text)
+        } else {
+            editor.replaceBeforeCursor(suggestion.replaceLength, suggestion.text)
+        }
+        completer.finishWord()
+        editor.commitText(SPACE)
+        shifted = false
+        refreshAutoShift()
+    }
+
     private fun typeCharacter(key: Key.Character) {
         val text = if (shifted) key.shifted else key.base
         if (isComposingLetter(key)) {
             composer.append(text)
         } else {
-            composer.finish()
+            // Letters continue the word; digits and punctuation end it.
+            if (text.all { WordContext.isWordChar(it) }) composer.finish() else completer.finishWord()
             editor.commitText(text)
         }
         shifted = false
@@ -67,12 +97,12 @@ class KeyInputHandler(private val editor: TextEditor) {
             ControlAction.SHIFT -> shifted = !shifted
             ControlAction.BACKSPACE -> backspace()
             ControlAction.ENTER -> {
-                composer.finish()
+                completer.finishWord()
                 editor.performEnter()
                 refreshAutoShift()
             }
             ControlAction.SPACE -> {
-                composer.finish()
+                completer.finishWord()
                 editor.commitText(SPACE)
                 refreshAutoShift()
             }

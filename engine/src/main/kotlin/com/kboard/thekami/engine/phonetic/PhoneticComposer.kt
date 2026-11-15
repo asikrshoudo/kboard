@@ -4,11 +4,16 @@ import com.kboard.thekami.engine.input.TextEditor
 
 /**
  * Collects typed letters and shows them as Bangla in the text field's
- * composing region. Nothing is final until [finish] is called.
+ * composing region. Nothing is final until [finish] or [replaceWith] is called.
  */
 class PhoneticComposer(private val editor: TextEditor) {
     private val letters = StringBuilder()
     private var shown = ""
+
+    /** The Latin letters typed for the current word. */
+    val latin: String get() = letters.toString()
+
+    val isComposing: Boolean get() = letters.isNotEmpty()
 
     fun append(letter: String) {
         dropIfCursorMoved()
@@ -29,6 +34,12 @@ class PhoneticComposer(private val editor: TextEditor) {
     fun finish() {
         if (letters.isEmpty()) return
         editor.finishComposing()
+        clear()
+    }
+
+    /** Replaces the word being composed with [text], which becomes ordinary text. */
+    fun replaceWith(text: String) {
+        editor.commitText(text)
         clear()
     }
 
