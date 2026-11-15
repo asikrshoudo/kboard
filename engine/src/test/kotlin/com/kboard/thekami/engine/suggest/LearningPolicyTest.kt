@@ -12,9 +12,15 @@ class LearningPolicyTest {
 
     @Test
     fun eachRestrictionAloneTurnsLearningOff() {
-        assertFalse(LearningPolicy.isLearningAllowed(sensitiveField = true, noPersonalizedLearning = false, incognito = false))
-        assertFalse(LearningPolicy.isLearningAllowed(sensitiveField = false, noPersonalizedLearning = true, incognito = false))
-        assertFalse(LearningPolicy.isLearningAllowed(sensitiveField = false, noPersonalizedLearning = false, incognito = true))
+        assertFalse(LearningPolicy.isLearningAllowed(sensitiveField = true,
+            noPersonalizedLearning = false,
+            incognito = false))
+        assertFalse(LearningPolicy.isLearningAllowed(sensitiveField = false,
+            noPersonalizedLearning = true,
+            incognito = false))
+        assertFalse(LearningPolicy.isLearningAllowed(sensitiveField = false,
+            noPersonalizedLearning = false,
+            incognito = true))
     }
 
     @Test

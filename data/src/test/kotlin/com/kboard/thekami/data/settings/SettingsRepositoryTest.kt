@@ -43,4 +43,12 @@ class SettingsRepositoryTest {
         repository.setLanguageId("bn-BD-phonetic")
         assertEquals("bn-BD-phonetic", repository.settings.first().languageId)
     }
+
+    @Test
+    fun incognitoIsOffByDefaultAndSavedChoiceIsReadBack() = runTest {
+        val repository = repository()
+        assertFalse(repository.settings.first().incognitoEnabled)
+        repository.setIncognitoEnabled(true)
+        assertTrue(repository.settings.first().incognitoEnabled)
+    }
 }

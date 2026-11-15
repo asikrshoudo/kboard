@@ -22,6 +22,7 @@ class SettingsRepository internal constructor(private val store: DataStore<Prefe
             KeyboardSettings(
                 hapticsEnabled = preferences[HAPTICS_ENABLED] ?: DEFAULTS.hapticsEnabled,
                 languageId = preferences[LANGUAGE_ID] ?: DEFAULTS.languageId,
+                incognitoEnabled = preferences[INCOGNITO_ENABLED] ?: DEFAULTS.incognitoEnabled,
             )
         }
 
@@ -33,9 +34,14 @@ class SettingsRepository internal constructor(private val store: DataStore<Prefe
         store.edit { it[LANGUAGE_ID] = id }
     }
 
+    suspend fun setIncognitoEnabled(enabled: Boolean) {
+        store.edit { it[INCOGNITO_ENABLED] = enabled }
+    }
+
     private companion object {
         val HAPTICS_ENABLED = booleanPreferencesKey("haptics_enabled")
         val LANGUAGE_ID = stringPreferencesKey("language_id")
+        val INCOGNITO_ENABLED = booleanPreferencesKey("incognito_enabled")
         val DEFAULTS = KeyboardSettings()
     }
 }
