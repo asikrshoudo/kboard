@@ -3,6 +3,6 @@
     <string name="ime_name">Kboard</string>
     <string name="subtype_english_us">English (US)</string>
     <string name="kb_label_letters">ABC</string>
-    <string name="kb_label_symbols">?123</string>
+    <string name="kb_label_symbols">\?123</string>
     <string name="kb_label_more_symbols">#+=</string>
 </resources>
