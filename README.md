@@ -16,10 +16,11 @@ What exists today:
 - English (US) QWERTY keyboard: shift, backspace with hold-to-repeat, key previews and per-key haptics
 - Companion app (Material 3): setup guide, haptics setting, typing test field
 - Number and symbol pages (including the Taka sign), sentence auto-capitalization where the field asks for it
+- Bangla (phonetic, Avro-style) and English (US), switched with the globe key; the current language is shown on the space bar
 - GitHub Actions: build, unit tests, Lint and Detekt on every push
 - Signed APK and AAB release pipeline
 
-What does not exist yet: other languages,
+What does not exist yet: the Bangla traditional layout, suggestions, other languages,
 prediction, autocorrect, key sounds and most settings.
 
 ## Planned goals (not implemented)

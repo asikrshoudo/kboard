@@ -50,3 +50,19 @@ pins and the reasons for them are in [ADR 0001](docs/decisions/0001-toolchain.md
 
 - [0001 Toolchain](docs/decisions/0001-toolchain.md)
 - [0002 CI-only builds and release](docs/decisions/0002-ci-only-builds-and-release.md)
+
+## Bangla phonetic input (implemented, basic)
+
+Typing `ami` shows আমি. Latin letters are collected by `PhoneticComposer`,
+converted by `PhoneticTransliterator` (pure Kotlin in `:engine`, covered by
+unit tests) and shown in the text field's composing region. Space, enter,
+punctuation, a page switch or a language switch keeps the word as ordinary
+text. If the text before the cursor no longer matches the word, the user moved
+the cursor and a new word starts.
+
+Rules follow Avro Phonetic: capitals change the sound (`t` ত, `T` ট), adjacent
+consonants form conjuncts (`rokto` রক্ত), `o` is the inherent vowel and `O` the
+ো sign, `ng` is ং.
+
+Not implemented yet: ঃ ঁ ৎ, Bangla digits, suggestions and alternatives for
+ambiguous spellings, long-press popups, the traditional (non-phonetic) layout.

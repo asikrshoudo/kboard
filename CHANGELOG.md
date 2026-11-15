@@ -24,3 +24,6 @@ had a public release yet.
 - Number and symbol pages (with the Taka sign), page switching, number and
   phone fields opening on the symbols page, and sentence auto-capitalization
   for fields that ask for it.
+- Language switching with a globe key (language shown on the space bar and
+  remembered). Bangla (Bangladesh) phonetic typing in the Avro style, with
+  conjuncts, vowel signs, anusvara and the dari (।) as the full stop.
