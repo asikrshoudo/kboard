@@ -4,6 +4,12 @@ package com.kboard.thekami.engine.input
 interface TextEditor {
     fun commitText(text: String)
 
+    /** Shows [text] as the word being composed, replacing the previous composing text. */
+    fun setComposingText(text: String)
+
+    /** Turns the composing text into ordinary text. */
+    fun finishComposing()
+
     /** Deletes the selection, or the character before the cursor. */
     fun deleteBackward()
 

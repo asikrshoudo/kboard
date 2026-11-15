@@ -12,6 +12,7 @@ enum class ControlAction {
     SHOW_LETTERS,
     SHOW_SYMBOLS,
     SHOW_MORE_SYMBOLS,
+    SWITCH_LANGUAGE,
 }
 
 sealed interface Key {
