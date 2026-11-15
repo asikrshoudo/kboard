@@ -5,6 +5,7 @@ import java.io.File
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -27,11 +28,19 @@ class SettingsRepositoryTest {
     }
 
     @Test
-    fun savedChoiceIsReadBack() = runTest {
+    fun savedHapticsChoiceIsReadBack() = runTest {
         val repository = repository()
         repository.setHapticsEnabled(false)
         assertFalse(repository.settings.first().hapticsEnabled)
         repository.setHapticsEnabled(true)
         assertTrue(repository.settings.first().hapticsEnabled)
+    }
+
+    @Test
+    fun languageIsEmptyByDefaultAndSavedChoiceIsReadBack() = runTest {
+        val repository = repository()
+        assertEquals("", repository.settings.first().languageId)
+        repository.setLanguageId("bn-BD-phonetic")
+        assertEquals("bn-BD-phonetic", repository.settings.first().languageId)
     }
 }

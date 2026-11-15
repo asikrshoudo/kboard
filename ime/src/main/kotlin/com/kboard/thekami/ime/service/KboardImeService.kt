@@ -6,16 +6,19 @@ import android.view.inputmethod.EditorInfo
 import com.kboard.thekami.data.settings.KeyboardSettings
 import com.kboard.thekami.data.settings.createSettingsRepository
 import com.kboard.thekami.engine.input.KeyInputHandler
-import com.kboard.thekami.engine.layout.EnglishUsLayout
+import com.kboard.thekami.engine.language.Language
 import com.kboard.thekami.engine.layout.Key
+import com.kboard.thekami.engine.layout.Layouts
 import com.kboard.thekami.ime.feedback.KeyHaptics
 import com.kboard.thekami.ime.input.EditorTraits
 import com.kboard.thekami.ime.input.InputConnectionEditor
 import com.kboard.thekami.ime.render.KeyListener
 import com.kboard.thekami.ime.render.KeyboardView
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 /** The system-facing keyboard service. Wires the view to input, feedback and settings. */
@@ -27,11 +30,11 @@ class KboardImeService : InputMethodService() {
         ),
     )
     private val haptics by lazy { KeyHaptics(this) }
-    private val serviceScope = CoroutineScope(SupervisorJob())
-    private var keyboardView: KeyboardView? = null
+    private val settingsRepository by lazy { createSettingsRepository(applicationContext) }
 
-    // Written from a background coroutine, read on the main thread per keypress.
-    @Volatile
+    // Main dispatcher: the input handler is only ever touched on the main thread.
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    private var keyboardView: KeyboardView? = null
     private var hapticsEnabled = KeyboardSettings().hapticsEnabled
 
     private val keyListener = object : KeyListener {
@@ -46,9 +49,9 @@ class KboardImeService : InputMethodService() {
     override fun onCreate() {
         super.onCreate()
         serviceScope.launch {
-            createSettingsRepository(applicationContext).settings.collect {
-                hapticsEnabled = it.hapticsEnabled
-            }
+            inputHandler.setLanguage(Language.fromId(settingsRepository.settings.first().languageId))
+            showCurrentState()
+            settingsRepository.settings.collect { hapticsEnabled = it.hapticsEnabled }
         }
     }
 
@@ -58,8 +61,11 @@ class KboardImeService : InputMethodService() {
     }
 
     override fun onCreateInputView(): View =
-        KeyboardView(this, EnglishUsLayout.layoutFor(inputHandler.layer), keyListener)
-            .also { keyboardView = it }
+        KeyboardView(this, Layouts.layoutFor(inputHandler.language, inputHandler.layer), keyListener)
+            .also {
+                keyboardView = it
+                showCurrentState()
+            }
 
     override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
         super.onStartInputView(info, restarting)
@@ -82,12 +88,21 @@ class KboardImeService : InputMethodService() {
     }
 
     private fun typeKey(key: Key) {
+        val languageBefore = inputHandler.language
         inputHandler.onKey(key)
+        if (inputHandler.language != languageBefore) saveLanguage()
         showCurrentState()
     }
 
+    private fun saveLanguage() {
+        val id = inputHandler.language.id
+        serviceScope.launch { settingsRepository.setLanguageId(id) }
+    }
+
     private fun showCurrentState() {
-        keyboardView?.setLayout(EnglishUsLayout.layoutFor(inputHandler.layer))
-        keyboardView?.setShiftActive(inputHandler.shifted)
+        val view = keyboardView ?: return
+        view.setLayout(Layouts.layoutFor(inputHandler.language, inputHandler.layer))
+        view.setShiftActive(inputHandler.shifted)
+        view.setSpaceLabel(inputHandler.language.nativeName)
     }
 }

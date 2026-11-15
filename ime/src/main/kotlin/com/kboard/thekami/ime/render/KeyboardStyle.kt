@@ -42,6 +42,7 @@ internal class KeyboardStyle(context: Context) {
         ControlAction.SHIFT to icon(context, R.drawable.kb_ic_shift),
         ControlAction.BACKSPACE to icon(context, R.drawable.kb_ic_backspace),
         ControlAction.ENTER to icon(context, R.drawable.kb_ic_enter),
+        ControlAction.SWITCH_LANGUAGE to icon(context, R.drawable.kb_ic_language),
     )
 
     private val labels: Map<ControlAction, String> = mapOf(

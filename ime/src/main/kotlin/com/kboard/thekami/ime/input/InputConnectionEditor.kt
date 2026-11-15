@@ -29,6 +29,14 @@ internal class InputConnectionEditor(
         }
     }
 
+    override fun setComposingText(text: String) {
+        connection()?.setComposingText(text, CURSOR_AFTER_TEXT)
+    }
+
+    override fun finishComposing() {
+        connection()?.finishComposingText()
+    }
+
     override fun textBeforeCursor(length: Int): String? =
         connection()?.getTextBeforeCursor(length, NO_FLAGS)?.toString()
 

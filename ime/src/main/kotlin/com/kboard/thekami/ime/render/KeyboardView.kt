@@ -44,6 +44,12 @@ internal class KeyboardView(
         invalidate()
     }
 
+    fun setSpaceLabel(label: String) {
+        if (painter.spaceLabel == label) return
+        painter.spaceLabel = label
+        invalidate()
+    }
+
     fun setLayout(newLayout: KeyboardLayout) {
         if (newLayout === layout) return
         layout = newLayout

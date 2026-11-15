@@ -9,7 +9,7 @@ import com.kboard.thekami.engine.layout.Key
 /**
  * Gives each kind of key its own vibration: a light tick for characters,
  * softer for space, sharper for backspace and firmest for enter. The values
- * are in [Pulse] constants below so they can be tuned on a real device.
+ * are the Pulse constants below so they can be tuned on a real device.
  */
 internal class KeyHaptics(context: Context) {
     private val vibrator: Vibrator? =
@@ -25,17 +25,20 @@ internal class KeyHaptics(context: Context) {
 
     private fun pulseFor(key: Key): Pulse? = when (key) {
         is Key.Character -> CHARACTER
-        is Key.Control -> when (key.action) {
-            ControlAction.SHIFT,
-            ControlAction.SHOW_LETTERS,
-            ControlAction.SHOW_SYMBOLS,
-            ControlAction.SHOW_MORE_SYMBOLS,
-            -> SHIFT
-            ControlAction.BACKSPACE -> BACKSPACE
-            ControlAction.ENTER -> ENTER
-            ControlAction.SPACE -> SPACE
-        }
+        is Key.Control -> pulseFor(key.action)
         is Key.Spacer -> null
+    }
+
+    private fun pulseFor(action: ControlAction): Pulse = when (action) {
+        ControlAction.SPACE -> SPACE
+        ControlAction.BACKSPACE -> BACKSPACE
+        ControlAction.ENTER -> ENTER
+        ControlAction.SHIFT,
+        ControlAction.SWITCH_LANGUAGE,
+        ControlAction.SHOW_LETTERS,
+        ControlAction.SHOW_SYMBOLS,
+        ControlAction.SHOW_MORE_SYMBOLS,
+        -> MODIFIER
     }
 
     /** One vibration: [durationMs] long, [amplitude] from 1 (weakest) to 255. */
@@ -43,7 +46,7 @@ internal class KeyHaptics(context: Context) {
 
     private companion object {
         val CHARACTER = Pulse(durationMs = 12, amplitude = 60)
-        val SHIFT = Pulse(durationMs = 14, amplitude = 80)
+        val MODIFIER = Pulse(durationMs = 14, amplitude = 80)
         val SPACE = Pulse(durationMs = 16, amplitude = 50)
         val BACKSPACE = Pulse(durationMs = 20, amplitude = 110)
         val ENTER = Pulse(durationMs = 26, amplitude = 150)

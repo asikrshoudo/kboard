@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.stringPreferencesKey
 import java.io.IOException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -18,15 +19,23 @@ class SettingsRepository internal constructor(private val store: DataStore<Prefe
             if (error is IOException) emit(emptyPreferences()) else throw error
         }
         .map { preferences ->
-            KeyboardSettings(hapticsEnabled = preferences[HAPTICS_ENABLED] ?: DEFAULTS.hapticsEnabled)
+            KeyboardSettings(
+                hapticsEnabled = preferences[HAPTICS_ENABLED] ?: DEFAULTS.hapticsEnabled,
+                languageId = preferences[LANGUAGE_ID] ?: DEFAULTS.languageId,
+            )
         }
 
     suspend fun setHapticsEnabled(enabled: Boolean) {
         store.edit { it[HAPTICS_ENABLED] = enabled }
     }
 
+    suspend fun setLanguageId(id: String) {
+        store.edit { it[LANGUAGE_ID] = id }
+    }
+
     private companion object {
         val HAPTICS_ENABLED = booleanPreferencesKey("haptics_enabled")
+        val LANGUAGE_ID = stringPreferencesKey("language_id")
         val DEFAULTS = KeyboardSettings()
     }
 }

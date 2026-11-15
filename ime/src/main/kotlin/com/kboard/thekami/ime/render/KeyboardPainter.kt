@@ -14,6 +14,9 @@ internal class KeyboardPainter(private val style: KeyboardStyle) {
     private val keyRect = RectF()
     private val previewRect = RectF()
 
+    /** Text shown on the space bar, normally the name of the current language. */
+    var spaceLabel: String = ""
+
     /** Draws in key coordinates: the origin is the top-left corner of the first key. */
     fun draw(
         canvas: Canvas,
@@ -46,9 +49,9 @@ internal class KeyboardPainter(private val style: KeyboardStyle) {
         }
     }
 
-    /** Page-switch keys show a text label; the others show an icon (space shows nothing). */
+    /** Space shows the language name, page-switch keys show text, the others show an icon. */
     private fun drawControl(canvas: Canvas, action: ControlAction) {
-        val label = style.labelFor(action)
+        val label = if (action == ControlAction.SPACE) spaceLabel else style.labelFor(action)
         if (label != null) {
             canvas.drawText(label, keyRect.centerX(), keyRect.centerY() + style.labelBaselineOffset, style.labelPaint)
         } else {
