@@ -1,3 +1,4 @@
+@file:Suppress("MatchingDeclarationName")
 package com.kboard.thekami.ui
 
 import androidx.compose.foundation.layout.Arrangement
