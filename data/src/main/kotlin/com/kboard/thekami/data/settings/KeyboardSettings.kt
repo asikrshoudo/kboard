@@ -12,4 +12,5 @@ data class KeyboardSettings(
     val incognitoEnabled: Boolean = false,
     val autocorrectEnabled: Boolean = true,
     val ignoredCorrections: Set<String> = emptySet(),
+    val appearance: KeyboardAppearance = KeyboardAppearance(),
 )

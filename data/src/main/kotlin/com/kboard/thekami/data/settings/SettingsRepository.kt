@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import java.io.IOException
@@ -26,6 +27,7 @@ class SettingsRepository internal constructor(private val store: DataStore<Prefe
                 incognitoEnabled = preferences[INCOGNITO_ENABLED] ?: DEFAULTS.incognitoEnabled,
                 autocorrectEnabled = preferences[AUTOCORRECT_ENABLED] ?: DEFAULTS.autocorrectEnabled,
                 ignoredCorrections = preferences[IGNORED_CORRECTIONS] ?: DEFAULTS.ignoredCorrections,
+                appearance = appearanceOf(preferences),
             )
         }
 
@@ -54,12 +56,40 @@ class SettingsRepository internal constructor(private val store: DataStore<Prefe
         store.edit { it.remove(IGNORED_CORRECTIONS) }
     }
 
+    suspend fun setNumberRowEnabled(enabled: Boolean) {
+        store.edit { it[NUMBER_ROW_ENABLED] = enabled }
+    }
+
+    /** Saved values outside the allowed range are moved to the nearest allowed value. */
+    suspend fun setKeyboardHeightPercent(percent: Int) {
+        store.edit { it[HEIGHT_PERCENT] = clampHeight(percent) }
+    }
+
+    suspend fun setKeyPreviewEnabled(enabled: Boolean) {
+        store.edit { it[KEY_PREVIEW_ENABLED] = enabled }
+    }
+
+    private fun appearanceOf(preferences: Preferences): KeyboardAppearance {
+        val defaults = DEFAULTS.appearance
+        return KeyboardAppearance(
+            numberRowEnabled = preferences[NUMBER_ROW_ENABLED] ?: defaults.numberRowEnabled,
+            heightPercent = clampHeight(preferences[HEIGHT_PERCENT] ?: defaults.heightPercent),
+            keyPreviewEnabled = preferences[KEY_PREVIEW_ENABLED] ?: defaults.keyPreviewEnabled,
+        )
+    }
+
+    private fun clampHeight(percent: Int): Int =
+        percent.coerceIn(KeyboardAppearance.MIN_HEIGHT_PERCENT, KeyboardAppearance.MAX_HEIGHT_PERCENT)
+
     private companion object {
         val HAPTICS_ENABLED = booleanPreferencesKey("haptics_enabled")
         val LANGUAGE_ID = stringPreferencesKey("language_id")
         val INCOGNITO_ENABLED = booleanPreferencesKey("incognito_enabled")
         val AUTOCORRECT_ENABLED = booleanPreferencesKey("autocorrect_enabled")
         val IGNORED_CORRECTIONS = stringSetPreferencesKey("ignored_corrections")
+        val NUMBER_ROW_ENABLED = booleanPreferencesKey("number_row_enabled")
+        val HEIGHT_PERCENT = intPreferencesKey("keyboard_height_percent")
+        val KEY_PREVIEW_ENABLED = booleanPreferencesKey("key_preview_enabled")
         val DEFAULTS = KeyboardSettings()
     }
 }

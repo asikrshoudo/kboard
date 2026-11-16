@@ -71,4 +71,33 @@ class SettingsRepositoryTest {
         repository.clearIgnoredCorrections()
         assertTrue(repository.settings.first().ignoredCorrections.isEmpty())
     }
+
+    @Test
+    fun appearanceHasTheDocumentedDefaults() = runTest {
+        val appearance = repository().settings.first().appearance
+        assertFalse(appearance.numberRowEnabled)
+        assertEquals(KeyboardAppearance.DEFAULT_HEIGHT_PERCENT, appearance.heightPercent)
+        assertTrue(appearance.keyPreviewEnabled)
+    }
+
+    @Test
+    fun numberRowAndKeyPreviewChoicesAreReadBack() = runTest {
+        val repository = repository()
+        repository.setNumberRowEnabled(true)
+        repository.setKeyPreviewEnabled(false)
+        val appearance = repository.settings.first().appearance
+        assertTrue(appearance.numberRowEnabled)
+        assertFalse(appearance.keyPreviewEnabled)
+    }
+
+    @Test
+    fun heightIsSavedAndKeptInsideTheAllowedRange() = runTest {
+        val repository = repository()
+        repository.setKeyboardHeightPercent(110)
+        assertEquals(110, repository.settings.first().appearance.heightPercent)
+        repository.setKeyboardHeightPercent(KeyboardAppearance.MAX_HEIGHT_PERCENT + 100)
+        assertEquals(KeyboardAppearance.MAX_HEIGHT_PERCENT, repository.settings.first().appearance.heightPercent)
+        repository.setKeyboardHeightPercent(0)
+        assertEquals(KeyboardAppearance.MIN_HEIGHT_PERCENT, repository.settings.first().appearance.heightPercent)
+    }
 }
