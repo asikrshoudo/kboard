@@ -32,3 +32,6 @@ had a public release yet.
   alternatives and mixed Bangla-English typing, incognito mode, and a button
   to delete everything learned. No learning or suggestions in password, email
   and web address fields.
+- Layout settings: an optional number row, keyboard height from 80 to 140
+  percent (with a drawing of the result in the app), and a switch for the key
+  preview bubble. Symbol pages keep the keyboard height by using taller keys.

@@ -7,42 +7,45 @@ privacy-first Android keyboard by [TheKami](https://www.thekami.tech).
 
 ## Status
 
-**Pre-alpha. A basic English (US) keyboard works on a real device; most features are missing.**
+**Pre-alpha. English (US) and Bangla (phonetic) typing work, with suggestions
+and autocorrect. Many features are still missing.**
 
 What exists today:
 
-- Gradle build (Kotlin DSL, version catalog, pinned toolchain)
-- `:app` (Hilt application class), `:engine` (layout, geometry and input logic, with tests) and `:ime` (keyboard service and Canvas view)
-- English (US) QWERTY keyboard: shift, backspace with hold-to-repeat, key previews and per-key haptics
-- Suggestion strip: on-device learning of your words (frequency, recency, word pairs), Bangla spelling alternatives, animated suggestion changes; incognito mode and reset in the app
-- Companion app (Material 3): setup guide, haptics setting, typing test field
-- Number and symbol pages (including the Taka sign), sentence auto-capitalization where the field asks for it
-- Bangla (phonetic, Avro-style) and English (US), switched with the globe key; the current language is shown on the space bar
-- GitHub Actions: build, unit tests, Lint and Detekt on every push
-- Signed APK and AAB release pipeline
+- English (US) QWERTY and Bangla phonetic (Avro-style) typing, switched with
+  the globe key; the current language is shown on the space bar
+- Number and symbol pages (including the Taka sign), sentence auto-capitalization
+- Optional number row, keyboard height from 80 to 140 percent, and key
+  preview bubbles that can be turned off
+- Suggestion strip: a small hand-picked word list for English and Bangla, plus
+  words learned from your own typing (frequency, recency, word pairs). Bangla
+  spelling alternatives. Each suggestion fades in place on its own, and the
+  animation follows the system animation setting
+- English autocorrect for well-known typos and missing apostrophes. Backspace
+  right after a correction undoes it, and that word is never changed again
+- Backspace hold-to-repeat and a different vibration for each kind of key
+- Companion app (Material 3): setup guide, haptics, autocorrect, layout
+  (number row, height with a drawing of the result, key preview), incognito
+  mode, and deleting everything learned
+- GitHub Actions: build, unit tests, Lint and Detekt on every push, and signed
+  APK and AAB releases
 
-What does not exist yet: the Bangla traditional layout, suggestions, other languages,
-prediction, autocorrect, key sounds and most settings.
+The newest items (layout settings, suggestion animation, built-in words,
+autocorrect) have unit tests where the logic allows, but are still being
+checked on a real device.
 
-## Planned goals (not implemented)
-
-- Bangla (Bangladesh) and English (US) first. Later English UK/CA, German,
-  Arabic, Japanese. Each language needs real input handling, not just a layout.
-- Suggestions learned on-device from your own typing. Prediction and
-  autocorrect are separate systems, and you stay in control.
-- No learning in password fields or incognito mode. Learned data can be
-  viewed and reset.
-- Smooth suggestion animations, distinct haptics, soft key sounds.
-- Material 3 companion app with dynamic color and accessibility support.
+Not built yet: the Bangla traditional layout, Bangla digits, key sounds,
+emoji, clipboard history, one-handed mode, themes, other languages,
+autocorrect based on a full dictionary.
 
 ## Privacy
 
-Today: the only permission requested is VIBRATE (key haptics), with no internet
-access, and cloud backup is disabled. Typed text is only committed to the text field:
-It never learns in password, email or web address fields or in incognito mode, and you can delete everything it learned from the app.
-
-These are design rules for all future code: offline-first, no account, no
-analytics, no typed text leaves the device. See [ARCHITECTURE.md](ARCHITECTURE.md).
+The app and keyboard request no internet permission (the only permission is
+VIBRATE, for key haptics), and cloud backup is disabled. Kboard remembers the
+words you use, only on this phone, to suggest them again. It never learns or
+suggests in password, email or web address fields, never learns in incognito
+mode or when an app asks keyboards not to learn, and you can delete everything
+it learned from the app. See [ARCHITECTURE.md](ARCHITECTURE.md) for details.
 
 ## Getting builds
 
@@ -54,19 +57,19 @@ There is no local build. Everything is built by GitHub Actions:
 
 ## Repository layout
 
-```
-
-app/          Android application module
-engine/       Pure Kotlin/JVM module (language, prediction, autocorrect)
+app/          Android application: companion app (Compose, Material 3)
+data/         Settings (DataStore) and learned words (Room)
+engine/       Pure Kotlin/JVM: layouts, input logic, Bangla phonetic,
+suggestions, autocorrect
+ime/          Keyboard service, Canvas keyboard view, suggestion strip, haptics
 gradle/       Version catalog and wrapper
 docs/         Architecture decision records
 .github/      CI, release and tooling workflows
 scripts/ci/   Helper scripts used by workflows
-```
-
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md), the [Code of Conduct](CODE_OF_CONDUCT.md) and the [Security Policy](SECURITY.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md), the [Code of Conduct](CODE_OF_CONDUCT.md)
+and the [Security Policy](SECURITY.md).
 
 ## License
 
