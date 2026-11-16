@@ -4,6 +4,7 @@ import android.inputmethodservice.InputMethodService
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import com.kboard.thekami.data.learning.createWordStore
+import com.kboard.thekami.data.settings.KeyboardAppearance
 import com.kboard.thekami.data.settings.KeyboardSettings
 import com.kboard.thekami.data.settings.createSettingsRepository
 import com.kboard.thekami.engine.input.KeyInputHandler
@@ -58,6 +59,7 @@ class KboardImeService : InputMethodService() {
     private var hapticsEnabled = KeyboardSettings().hapticsEnabled
     private var incognito = KeyboardSettings().incognitoEnabled
     private var autocorrectEnabled = KeyboardSettings().autocorrectEnabled
+    private var appearance = KeyboardAppearance()
 
     // Facts about the focused text field, set in onStartInputView.
     private var sensitiveField = false
@@ -89,8 +91,11 @@ class KboardImeService : InputMethodService() {
                 hapticsEnabled = it.hapticsEnabled
                 incognito = it.incognitoEnabled
                 autocorrectEnabled = it.autocorrectEnabled
+                appearance = it.appearance
                 inputHandler.ignoredCorrections = it.ignoredCorrections
                 applyFieldRules()
+                // A changed number row, height or preview choice shows up at once.
+                showCurrentState()
             }
         }
     }
@@ -100,12 +105,13 @@ class KboardImeService : InputMethodService() {
         super.onDestroy()
     }
 
-    override fun onCreateInputView(): View =
-        KeyboardView(this, Layouts.layoutFor(inputHandler.language, inputHandler.layer), keyListener)
-            .also {
-                keyboardView = it
-                showCurrentState()
-            }
+    override fun onCreateInputView(): View {
+        val layout = Layouts.layoutFor(inputHandler.language, inputHandler.layer, appearance.numberRowEnabled)
+        return KeyboardView(this, layout, keyListener).also {
+            keyboardView = it
+            showCurrentState()
+        }
+    }
 
     override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
         super.onStartInputView(info, restarting)
@@ -152,7 +158,13 @@ class KboardImeService : InputMethodService() {
 
     private fun showCurrentState() {
         val view = keyboardView ?: return
-        view.setLayout(Layouts.layoutFor(inputHandler.language, inputHandler.layer))
+        val numberRow = appearance.numberRowEnabled
+        view.setLayout(
+            Layouts.layoutFor(inputHandler.language, inputHandler.layer, numberRow),
+            Layouts.rowCount(numberRow),
+        )
+        view.heightPercent = appearance.heightPercent
+        view.keyPreviewEnabled = appearance.keyPreviewEnabled
         view.shiftActive = inputHandler.shifted
         view.spaceLabel = inputHandler.language.nativeName
         refreshSuggestions(view)

@@ -15,8 +15,11 @@ import kotlin.math.roundToInt
  * Shows a [KeyboardLayout] with a suggestion strip above it and reports
  * touches to a [KeyListener]. Keys fire on touch-down for the lowest latency,
  * and every finger is tracked so fast two-thumb typing works. The area above
- * the strip is transparent and holds key previews. All pages have the same
- * number of rows, so switching pages never changes the keyboard height.
+ * the strip is transparent and holds key previews.
+ *
+ * The keyboard is [rowSlots] rows tall on every page. A page with fewer rows
+ * (the symbol pages) shares the same height, so its keys are taller and
+ * switching pages never changes the keyboard height.
  */
 // ViewConstructor: created in code only. ClickableViewAccessibility: touch
 // exploration support is not implemented yet.
@@ -32,6 +35,7 @@ internal class KeyboardView(
     private val repeater = KeyRepeater(this, listener)
     private val heldKeys = SparseArray<PlacedKey>()
     private var layout = initialLayout
+    private var rowSlots = initialLayout.rows.size
     private var placedKeys: List<PlacedKey> = emptyList()
     private var contentWidth = 0f
 
@@ -51,22 +55,42 @@ internal class KeyboardView(
             invalidate()
         }
 
+    /** Key height as a percentage of the default. */
+    var heightPercent: Int = FULL_PERCENT
+        set(value) {
+            if (field == value) return
+            field = value
+            requestLayout()
+        }
+
+    /** Whether a bubble with the letter is shown above a pressed key. */
+    var keyPreviewEnabled: Boolean = true
+        set(value) {
+            if (field == value) return
+            field = value
+            painter.previewsEnabled = value
+            invalidate()
+        }
+
     /** Height of the transparent area above the strip. The app below is not covered by it. */
     val overlayHeight: Int get() = style.previewHeadroom - style.stripHeight
 
     fun setSuggestions(texts: List<String>) = strip.setSuggestions(texts)
 
-    fun setLayout(newLayout: KeyboardLayout) {
-        if (newLayout === layout) return
+    fun setLayout(newLayout: KeyboardLayout, newRowSlots: Int) {
+        val rowsChanged = newRowSlots != rowSlots
+        if (newLayout === layout && !rowsChanged) return
         layout = newLayout
+        rowSlots = newRowSlots
         heldKeys.clear()
         repeater.stop()
+        if (rowsChanged) requestLayout()
         placeKeys()
         invalidate()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val keysHeight = (style.keyHeight * layout.rows.size).roundToInt()
+        val keysHeight = (style.keyHeight * heightPercent / FULL_PERCENT * rowSlots).roundToInt()
         setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), keysHeight + style.previewHeadroom)
     }
 
@@ -106,6 +130,7 @@ internal class KeyboardView(
         return true
     }
 
+    /** The rows share all the height below the strip equally, whatever the page. */
     private fun placeKeys() {
         val contentHeight = (height - style.previewHeadroom).toFloat()
         placedKeys = LayoutGeometry.place(layout, contentWidth, contentHeight)
@@ -129,5 +154,10 @@ internal class KeyboardView(
         heldKeys.remove(pointerId)
         repeater.stopIfHeldBy(pointerId)
         invalidate()
+    }
+
+    private companion object {
+        /** 100 percent is the default key height. */
+        const val FULL_PERCENT = 100
     }
 }

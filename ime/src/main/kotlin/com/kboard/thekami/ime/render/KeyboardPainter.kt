@@ -17,6 +17,9 @@ internal class KeyboardPainter(private val style: KeyboardStyle) {
     /** Text shown on the space bar, normally the name of the current language. */
     var spaceLabel: String = ""
 
+    /** When false, no bubble is drawn above a pressed key. */
+    var previewsEnabled: Boolean = true
+
     /** Draws in key coordinates: the origin is the top-left corner of the first key. */
     fun draw(
         canvas: Canvas,
@@ -26,6 +29,7 @@ internal class KeyboardPainter(private val style: KeyboardStyle) {
         contentWidth: Float,
     ) {
         keys.forEach { drawKey(canvas, it, held, shiftActive) }
+        if (!previewsEnabled) return
         for (i in 0 until held.size()) {
             drawPreview(canvas, held.valueAt(i), shiftActive, contentWidth)
         }
