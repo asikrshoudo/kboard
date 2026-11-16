@@ -35,6 +35,18 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch { repository.setIncognitoEnabled(enabled) }
     }
 
+    fun setNumberRowEnabled(enabled: Boolean) {
+        viewModelScope.launch { repository.setNumberRowEnabled(enabled) }
+    }
+
+    fun setKeyPreviewEnabled(enabled: Boolean) {
+        viewModelScope.launch { repository.setKeyPreviewEnabled(enabled) }
+    }
+
+    fun setKeyboardHeightPercent(percent: Int) {
+        viewModelScope.launch { repository.setKeyboardHeightPercent(percent) }
+    }
+
     /** Deletes every learned word and word pair, and the corrections the user had undone. */
     fun resetLearnedData() {
         viewModelScope.launch {

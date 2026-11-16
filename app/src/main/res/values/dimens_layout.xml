@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Same as the real key height at 100 percent, so the drawing is true to size. -->
+    <dimen name="preview_key_height">52dp</dimen>
+    <dimen name="preview_key_gap">4dp</dimen>
+    <dimen name="preview_key_radius">6dp</dimen>
+    <dimen name="preview_radius">14dp</dimen>
+</resources>

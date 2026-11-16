@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="layout_title">Layout</string>
+    <string name="number_row_title">Number row</string>
+    <string name="number_row_description">Shows the digits 1 to 0 above the letters.</string>
+    <string name="key_preview_title">Key preview</string>
+    <string name="key_preview_description">Shows a bubble with the letter above the key you press.</string>
+    <string name="height_title">Keyboard height: %1$d%%</string>
+    <string name="layout_hint">The drawing shows the size. Tap the Type here box below to open the real keyboard; it changes when you lift your finger from the slider.</string>
+</resources>

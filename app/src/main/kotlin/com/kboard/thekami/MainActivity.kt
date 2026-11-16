@@ -12,6 +12,7 @@ import androidx.compose.runtime.setValue
 import com.kboard.thekami.setup.KeyboardStatus
 import com.kboard.thekami.ui.HomeActions
 import com.kboard.thekami.ui.HomeScreen
+import com.kboard.thekami.ui.LayoutActions
 import com.kboard.thekami.ui.SettingsViewModel
 import com.kboard.thekami.ui.theme.KboardTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,10 +33,15 @@ class MainActivity : ComponentActivity() {
             onIncognitoChange = viewModel::setIncognitoEnabled,
             onResetLearning = viewModel::resetLearnedData,
         )
+        val layoutActions = LayoutActions(
+            onNumberRowChange = viewModel::setNumberRowEnabled,
+            onKeyPreviewChange = viewModel::setKeyPreviewEnabled,
+            onHeightChange = viewModel::setKeyboardHeightPercent,
+        )
         setContent {
             KboardTheme {
                 val settings by viewModel.settings.collectAsState()
-                HomeScreen(status, resumeCount, settings, actions)
+                HomeScreen(status, resumeCount, settings, actions, layoutActions)
             }
         }
     }

@@ -20,7 +20,9 @@ import com.kboard.thekami.setup.KeyboardStatus
 
 /**
  * The only screen. [refreshKey] changes every time the app returns to the
- * foreground, so the setup steps re-check the system state.
+ * foreground, so the setup steps re-check the system state. The layout card
+ * sits next to the "Try it" field so a changed layout can be seen on the real
+ * keyboard right away.
  */
 @Composable
 fun HomeScreen(
@@ -28,6 +30,7 @@ fun HomeScreen(
     refreshKey: Int,
     settings: KeyboardSettings,
     actions: HomeActions,
+    layoutActions: LayoutActions,
 ) {
     val enabled = remember(refreshKey) { status.isEnabled() }
     val selected = remember(refreshKey) { status.isSelected() }
@@ -50,8 +53,9 @@ fun HomeScreen(
                 onHapticsChange = actions.onHapticsChange,
                 onAutocorrectChange = actions.onAutocorrectChange,
             )
-            LearningCard(settings.incognitoEnabled, actions.onIncognitoChange, actions.onResetLearning)
+            LayoutCard(settings.appearance, layoutActions)
             TryItCard()
+            LearningCard(settings.incognitoEnabled, actions.onIncognitoChange, actions.onResetLearning)
             PrivacyCard()
         }
     }
