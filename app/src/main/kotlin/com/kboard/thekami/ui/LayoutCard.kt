@@ -45,7 +45,8 @@ fun LayoutCard(appearance: KeyboardAppearance, actions: LayoutActions) {
             value = sliderValue,
             onValueChange = { sliderValue = it },
             onValueChangeFinished = { actions.onHeightChange(sliderValue.roundToInt()) },
-            valueRange = KeyboardAppearance.MIN_HEIGHT_PERCENT.toFloat()..KeyboardAppearance.MAX_HEIGHT_PERCENT.toFloat(),
+            valueRange = KeyboardAppearance.MIN_HEIGHT_PERCENT.toFloat()..
+                KeyboardAppearance.MAX_HEIGHT_PERCENT.toFloat(),
             steps = HEIGHT_STEPS,
         )
         KeyboardPreview(rows = Layouts.rowCount(appearance.numberRowEnabled), heightPercent = percent)
