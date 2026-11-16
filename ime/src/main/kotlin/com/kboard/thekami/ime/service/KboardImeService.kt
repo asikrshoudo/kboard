@@ -6,6 +6,7 @@ import android.view.inputmethod.EditorInfo
 import com.kboard.thekami.data.learning.createWordStore
 import com.kboard.thekami.data.settings.KeyboardAppearance
 import com.kboard.thekami.data.settings.KeyboardSettings
+import com.kboard.thekami.data.settings.KeyboardSound
 import com.kboard.thekami.data.settings.createSettingsRepository
 import com.kboard.thekami.engine.input.KeyInputHandler
 import com.kboard.thekami.engine.language.Language
@@ -17,6 +18,7 @@ import com.kboard.thekami.engine.suggest.Suggestion
 import com.kboard.thekami.engine.suggest.SuggestionProvider
 import com.kboard.thekami.engine.suggest.SuggestionRequest
 import com.kboard.thekami.ime.feedback.KeyHaptics
+import com.kboard.thekami.ime.feedback.KeySounds
 import com.kboard.thekami.ime.input.EditorTraits
 import com.kboard.thekami.ime.input.InputConnectionEditor
 import com.kboard.thekami.ime.render.KeyListener
@@ -45,6 +47,7 @@ class KboardImeService : InputMethodService() {
     private val settingsRepository by lazy { createSettingsRepository(applicationContext) }
     private val provider by lazy { SuggestionProvider(wordStore, Seeds::of, System::currentTimeMillis) }
     private val haptics by lazy { KeyHaptics(this) }
+    private val sounds by lazy { KeySounds(this) }
     private val inputHandler = KeyInputHandler(
         editor,
         corrections = { word -> serviceScope.launch { settingsRepository.addIgnoredCorrection(word) } },
@@ -60,6 +63,7 @@ class KboardImeService : InputMethodService() {
     private var incognito = KeyboardSettings().incognitoEnabled
     private var autocorrectEnabled = KeyboardSettings().autocorrectEnabled
     private var appearance = KeyboardAppearance()
+    private var sound = KeyboardSound()
 
     // Facts about the focused text field, set in onStartInputView.
     private var sensitiveField = false
@@ -69,6 +73,7 @@ class KboardImeService : InputMethodService() {
     private val keyListener = object : KeyListener {
         override fun onKeyPress(key: Key) {
             if (hapticsEnabled) haptics.perform(key)
+            if (sound.enabled) sounds.perform(key, sound.gain)
             typeKey(key)
         }
 
@@ -77,6 +82,7 @@ class KboardImeService : InputMethodService() {
         override fun onSuggestionPick(index: Int) {
             val suggestion = suggestions.getOrNull(index) ?: return
             if (hapticsEnabled) haptics.suggestionSelected()
+            if (sound.enabled) sounds.suggestionSelected(sound.gain)
             inputHandler.acceptSuggestion(suggestion)
             showCurrentState()
         }
@@ -92,6 +98,7 @@ class KboardImeService : InputMethodService() {
                 incognito = it.incognitoEnabled
                 autocorrectEnabled = it.autocorrectEnabled
                 appearance = it.appearance
+                sound = it.sound
                 inputHandler.ignoredCorrections = it.ignoredCorrections
                 applyFieldRules()
                 // A changed number row, height or preview choice shows up at once.
