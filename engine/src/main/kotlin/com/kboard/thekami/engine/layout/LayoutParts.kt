@@ -19,6 +19,9 @@ internal fun characterKeys(chars: String): List<Key> =
 internal fun letterKeys(chars: String): List<Key> =
     chars.map { Key.Character(base = it.toString(), shifted = it.uppercase()) }
 
+/** The row of digits that the number-row setting adds above the letters. */
+internal fun numberRowKeys(): List<Key> = characterKeys("1234567890")
+
 /** Third row: [first] control, the [middle] keys, then backspace. */
 internal fun thirdRow(first: ControlAction, middle: List<Key>): List<Key> = buildList {
     add(Key.Control(first, WIDE_CONTROL))
