@@ -35,3 +35,7 @@ had a public release yet.
 - Layout settings: an optional number row, keyboard height from 80 to 140
   percent (with a drawing of the result in the app), and a switch for the key
   preview bubble. Symbol pages keep the keyboard height by using taller keys.
+- Key sounds: the phone's own key clicks (different for letters, space, delete
+  and enter) with a volume setting, off by default and separate from vibration.
+- CI now fails if the APK asks for the internet permission.
+- Documentation split by topic under `docs/`.
