@@ -18,7 +18,6 @@ import com.kboard.thekami.R
 import com.kboard.thekami.data.settings.KeyboardSettings
 import com.kboard.thekami.setup.KeyboardStatus
 
-
 /**
  * The only screen. [refreshKey] changes every time the app returns to the
  * foreground, so the setup steps re-check the system state.
