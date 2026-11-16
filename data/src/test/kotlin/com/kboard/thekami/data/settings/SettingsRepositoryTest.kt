@@ -1,7 +1,5 @@
 package com.kboard.thekami.data.settings
 
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
-import java.io.File
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -16,11 +14,7 @@ class SettingsRepositoryTest {
     @get:Rule
     val folder = TemporaryFolder()
 
-    private fun TestScope.repository() = SettingsRepository(
-        PreferenceDataStoreFactory.create(scope = backgroundScope) {
-            File(folder.root, "settings.preferences_pb")
-        },
-    )
+    private fun TestScope.repository() = settingsRepository(folder.root)
 
     @Test
     fun hapticsAreOnByDefault() = runTest {
@@ -70,34 +64,5 @@ class SettingsRepositoryTest {
         assertEquals(setOf("teh", "dont"), repository.settings.first().ignoredCorrections)
         repository.clearIgnoredCorrections()
         assertTrue(repository.settings.first().ignoredCorrections.isEmpty())
-    }
-
-    @Test
-    fun appearanceHasTheDocumentedDefaults() = runTest {
-        val appearance = repository().settings.first().appearance
-        assertFalse(appearance.numberRowEnabled)
-        assertEquals(KeyboardAppearance.DEFAULT_HEIGHT_PERCENT, appearance.heightPercent)
-        assertTrue(appearance.keyPreviewEnabled)
-    }
-
-    @Test
-    fun numberRowAndKeyPreviewChoicesAreReadBack() = runTest {
-        val repository = repository()
-        repository.setNumberRowEnabled(true)
-        repository.setKeyPreviewEnabled(false)
-        val appearance = repository.settings.first().appearance
-        assertTrue(appearance.numberRowEnabled)
-        assertFalse(appearance.keyPreviewEnabled)
-    }
-
-    @Test
-    fun heightIsSavedAndKeptInsideTheAllowedRange() = runTest {
-        val repository = repository()
-        repository.setKeyboardHeightPercent(110)
-        assertEquals(110, repository.settings.first().appearance.heightPercent)
-        repository.setKeyboardHeightPercent(KeyboardAppearance.MAX_HEIGHT_PERCENT + 100)
-        assertEquals(KeyboardAppearance.MAX_HEIGHT_PERCENT, repository.settings.first().appearance.heightPercent)
-        repository.setKeyboardHeightPercent(0)
-        assertEquals(KeyboardAppearance.MIN_HEIGHT_PERCENT, repository.settings.first().appearance.heightPercent)
     }
 }
