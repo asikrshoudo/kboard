@@ -36,15 +36,23 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun setNumberRowEnabled(enabled: Boolean) {
-        viewModelScope.launch { repository.setNumberRowEnabled(enabled) }
+        viewModelScope.launch { repository.appearance.setNumberRowEnabled(enabled) }
     }
 
     fun setKeyPreviewEnabled(enabled: Boolean) {
-        viewModelScope.launch { repository.setKeyPreviewEnabled(enabled) }
+        viewModelScope.launch { repository.appearance.setKeyPreviewEnabled(enabled) }
     }
 
     fun setKeyboardHeightPercent(percent: Int) {
-        viewModelScope.launch { repository.setKeyboardHeightPercent(percent) }
+        viewModelScope.launch { repository.appearance.setHeightPercent(percent) }
+    }
+
+    fun setSoundEnabled(enabled: Boolean) {
+        viewModelScope.launch { repository.sound.setEnabled(enabled) }
+    }
+
+    fun setSoundVolumePercent(percent: Int) {
+        viewModelScope.launch { repository.sound.setVolumePercent(percent) }
     }
 
     /** Deletes every learned word and word pair, and the corrections the user had undone. */

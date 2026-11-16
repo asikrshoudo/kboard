@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sound_title">Sound</string>
+    <string name="sound_enabled_title">Key sound</string>
+    <string name="sound_enabled_description">Plays the key click sounds of your phone, a different one for letters, space, delete and enter. It needs Touch sounds to be on in your phone Sound settings, and stays quiet when the phone is silent or on vibrate.</string>
+    <string name="volume_title">Volume: %1$d%%</string>
+</resources>

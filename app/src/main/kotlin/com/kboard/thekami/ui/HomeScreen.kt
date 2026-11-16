@@ -30,7 +30,6 @@ fun HomeScreen(
     refreshKey: Int,
     settings: KeyboardSettings,
     actions: HomeActions,
-    layoutActions: LayoutActions,
 ) {
     val enabled = remember(refreshKey) { status.isEnabled() }
     val selected = remember(refreshKey) { status.isSelected() }
@@ -53,7 +52,8 @@ fun HomeScreen(
                 onHapticsChange = actions.onHapticsChange,
                 onAutocorrectChange = actions.onAutocorrectChange,
             )
-            LayoutCard(settings.appearance, layoutActions)
+            SoundCard(settings.sound, actions.sound)
+            LayoutCard(settings.appearance, actions.layout)
             TryItCard()
             LearningCard(settings.incognitoEnabled, actions.onIncognitoChange, actions.onResetLearning)
             PrivacyCard()

@@ -1,9 +1,11 @@
 package com.kboard.thekami.ui
 
-/** What the user can change on the home screen. */
+/** Everything the user can change on the home screen. */
 class HomeActions(
     val onHapticsChange: (Boolean) -> Unit,
     val onAutocorrectChange: (Boolean) -> Unit,
     val onIncognitoChange: (Boolean) -> Unit,
     val onResetLearning: () -> Unit,
+    val layout: LayoutActions,
+    val sound: SoundActions,
 )
