@@ -2,7 +2,7 @@ package com.kboard.thekami.engine.layout
 
 import com.kboard.thekami.engine.language.Language
 
-/** Chooses the page to show. Letters follow the language; symbol pages are shared. */
+/** Chooses the page to show. Letters follow the language; symbol and number pages are shared. */
 object Layouts {
     private const val DARI = "\u0964"
 
@@ -27,6 +27,7 @@ object Layouts {
         Layer.LETTERS -> letters(language, numberRow)
         Layer.SYMBOLS -> SymbolLayouts.symbols
         Layer.MORE_SYMBOLS -> SymbolLayouts.moreSymbols
+        Layer.NUMPAD -> NumpadLayout.numpad
     }
 
     /**

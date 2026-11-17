@@ -103,6 +103,12 @@ class KeyInputHandler(
         refreshAutoShift()
     }
 
+    /** Shows another page. A Bangla word being typed is kept as ordinary text first. */
+    fun showLayer(newLayer: Layer) {
+        composer.finish()
+        layer = newLayer
+    }
+
     private fun typeCharacter(key: Key.Character) {
         val text = if (shifted) key.shifted else key.base
         val isLatinLetter = key.base.singleOrNull()?.let { it in 'a'..'z' } == true
@@ -150,11 +156,6 @@ class KeyInputHandler(
                 refreshAutoShift()
             }
         }
-    }
-
-    private fun showLayer(newLayer: Layer) {
-        composer.finish()
-        layer = newLayer
     }
 
     private fun correctBefore(delimiter: String, canUndo: Boolean) {
