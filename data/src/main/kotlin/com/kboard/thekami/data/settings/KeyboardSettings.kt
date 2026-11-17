@@ -14,4 +14,5 @@ data class KeyboardSettings(
     val ignoredCorrections: Set<String> = emptySet(),
     val appearance: KeyboardAppearance = KeyboardAppearance(),
     val sound: KeyboardSound = KeyboardSound(),
+    val behavior: KeyboardBehavior = KeyboardBehavior(),
 )

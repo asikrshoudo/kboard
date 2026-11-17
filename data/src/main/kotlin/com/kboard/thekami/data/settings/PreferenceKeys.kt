@@ -17,4 +17,5 @@ internal object PreferenceKeys {
     val KEY_PREVIEW_ENABLED = booleanPreferencesKey("key_preview_enabled")
     val SOUND_ENABLED = booleanPreferencesKey("sound_enabled")
     val SOUND_VOLUME_PERCENT = intPreferencesKey("sound_volume_percent")
+    val SPACE_LONG_PRESS = stringPreferencesKey("space_long_press")
 }

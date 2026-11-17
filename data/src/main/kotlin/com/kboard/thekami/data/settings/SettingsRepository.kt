@@ -11,7 +11,8 @@ import kotlinx.coroutines.flow.map
 
 /**
  * Reads and writes [KeyboardSettings] on the device. Nothing leaves the phone.
- * The layout and sound choices are saved through [appearance] and [sound].
+ * The layout, sound and gesture choices are saved through [appearance], [sound]
+ * and [behavior].
  */
 class SettingsRepository internal constructor(private val store: DataStore<Preferences>) {
     /** Saves how the keyboard looks and is laid out. */
@@ -19,6 +20,9 @@ class SettingsRepository internal constructor(private val store: DataStore<Prefe
 
     /** Saves the key sound choices. */
     val sound = SoundEditor(store)
+
+    /** Saves the gesture choices. */
+    val behavior = BehaviorEditor(store)
 
     val settings: Flow<KeyboardSettings> = store.data
         .catch { error ->
@@ -34,6 +38,7 @@ class SettingsRepository internal constructor(private val store: DataStore<Prefe
                 ignoredCorrections = preferences[PreferenceKeys.IGNORED_CORRECTIONS] ?: DEFAULTS.ignoredCorrections,
                 appearance = AppearanceEditor.read(preferences),
                 sound = SoundEditor.read(preferences),
+                behavior = BehaviorEditor.read(preferences),
             )
         }
 
