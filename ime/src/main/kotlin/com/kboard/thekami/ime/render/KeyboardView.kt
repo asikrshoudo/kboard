@@ -3,19 +3,16 @@ package com.kboard.thekami.ime.render
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
-import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.View
 import com.kboard.thekami.engine.layout.KeyboardLayout
 import com.kboard.thekami.engine.layout.LayoutGeometry
-import com.kboard.thekami.engine.layout.PlacedKey
 import kotlin.math.roundToInt
 
 /**
- * Shows a [KeyboardLayout] with a suggestion strip above it and reports
- * touches to a [KeyListener]. Keys fire on touch-down for the lowest latency,
- * and every finger is tracked so fast two-thumb typing works. The area above
- * the strip is transparent and holds key previews.
+ * Draws a [KeyboardLayout] with a suggestion strip and a toolbar above it.
+ * Touches are handled by [KeyboardTouch]. The area above the strip is
+ * transparent and holds key previews.
  *
  * The keyboard is [rowSlots] rows tall on every page. A page with fewer rows
  * (the symbol pages) shares the same height, so its keys are taller and
@@ -27,16 +24,15 @@ import kotlin.math.roundToInt
 internal class KeyboardView(
     context: Context,
     initialLayout: KeyboardLayout,
-    private val listener: KeyListener,
+    listener: KeyListener,
 ) : View(context) {
     private val style = KeyboardStyle(context)
     private val painter = KeyboardPainter(style)
     private val strip = SuggestionStrip(this, style)
-    private val repeater = KeyRepeater(this, listener)
-    private val heldKeys = SparseArray<PlacedKey>()
+    private val toolbar = ToolbarStrip(this, style)
+    private val touch = KeyboardTouch(this, style, listener, strip, toolbar)
     private var layout = initialLayout
     private var rowSlots = initialLayout.rows.size
-    private var placedKeys: List<PlacedKey> = emptyList()
     private var contentWidth = 0f
 
     var shiftActive: Boolean = false
@@ -72,6 +68,13 @@ internal class KeyboardView(
             invalidate()
         }
 
+    /** Whether holding the space bar does something (then space is typed when lifted). */
+    var spaceLongPressEnabled: Boolean
+        get() = touch.spaceLongPressEnabled
+        set(value) {
+            touch.spaceLongPressEnabled = value
+        }
+
     /** Height of the transparent area above the strip. The app below is not covered by it. */
     val overlayHeight: Int get() = style.previewHeadroom - style.stripHeight
 
@@ -82,8 +85,7 @@ internal class KeyboardView(
         if (newLayout === layout && !rowsChanged) return
         layout = newLayout
         rowSlots = newRowSlots
-        heldKeys.clear()
-        repeater.stop()
+        touch.reset()
         if (rowsChanged) requestLayout()
         placeKeys()
         invalidate()
@@ -96,64 +98,40 @@ internal class KeyboardView(
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         contentWidth = w - 2 * style.edgePadding
-        heldKeys.clear()
-        repeater.stop()
+        touch.reset()
         placeKeys()
     }
 
     override fun onDraw(canvas: Canvas) {
         val keysTop = style.previewHeadroom.toFloat()
-        canvas.drawRect(0f, keysTop - style.stripHeight, width.toFloat(), height.toFloat(), style.backgroundPaint)
-        strip.draw(canvas, width.toFloat())
+        val fullWidth = width.toFloat()
+        canvas.drawRect(0f, keysTop - style.stripHeight, fullWidth, height.toFloat(), style.backgroundPaint)
+        // The suggestions sit to the right of the toolbar toggle button.
         val saved = canvas.save()
-        canvas.translate(style.edgePadding, keysTop)
-        painter.draw(canvas, placedKeys, heldKeys, shiftActive, contentWidth)
+        canvas.translate(toolbar.buttonWidth, 0f)
+        strip.draw(canvas, fullWidth - toolbar.buttonWidth)
         canvas.restoreToCount(saved)
+        toolbar.draw(canvas, fullWidth)
+        val savedKeys = canvas.save()
+        canvas.translate(style.edgePadding, keysTop)
+        painter.draw(canvas, touch.placedKeys, touch.held, shiftActive, contentWidth)
+        canvas.restoreToCount(savedKeys)
     }
 
     override fun onDetachedFromWindow() {
-        repeater.stop()
+        touch.reset()
         super.onDetachedFromWindow()
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        when (event.actionMasked) {
-            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> press(event, event.actionIndex)
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> release(event, event.actionIndex)
-            MotionEvent.ACTION_CANCEL -> {
-                heldKeys.clear()
-                repeater.stop()
-                strip.cancelTouch()
-                invalidate()
-            }
-        }
+        touch.onTouch(event)
         return true
     }
 
     /** The rows share all the height below the strip equally, whatever the page. */
     private fun placeKeys() {
         val contentHeight = (height - style.previewHeadroom).toFloat()
-        placedKeys = LayoutGeometry.place(layout, contentWidth, contentHeight)
-    }
-
-    private fun press(event: MotionEvent, index: Int) {
-        val x = event.getX(index)
-        val y = event.getY(index)
-        val pointerId = event.getPointerId(index)
-        if (strip.touchDown(pointerId, x, y, width.toFloat())) return
-        val placed = LayoutGeometry.keyAt(placedKeys, x - style.edgePadding, y - style.previewHeadroom) ?: return
-        heldKeys.put(pointerId, placed)
-        invalidate()
-        listener.onKeyPress(placed.key)
-        repeater.start(pointerId, placed.key)
-    }
-
-    private fun release(event: MotionEvent, index: Int) {
-        val pointerId = event.getPointerId(index)
-        strip.touchUp(pointerId, event.getX(index), width.toFloat())?.let { listener.onSuggestionPick(it) }
-        heldKeys.remove(pointerId)
-        repeater.stopIfHeldBy(pointerId)
-        invalidate()
+        touch.placedKeys = LayoutGeometry.place(layout, contentWidth, contentHeight)
     }
 
     private companion object {

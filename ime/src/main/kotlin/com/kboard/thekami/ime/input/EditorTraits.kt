@@ -18,9 +18,13 @@ internal object EditorTraits {
         InputType.TYPE_TEXT_VARIATION_URI,
     )
 
-    /** Number and phone fields open on the symbols page, where the digits are. */
+    /**
+     * Number fields open on the number pad. Phone fields open on the symbols
+     * page, where the digits and the signs a phone number needs are.
+     */
     fun startLayer(inputType: Int): Layer = when (inputClass(inputType)) {
-        InputType.TYPE_CLASS_NUMBER, InputType.TYPE_CLASS_PHONE -> Layer.SYMBOLS
+        InputType.TYPE_CLASS_NUMBER -> Layer.NUMPAD
+        InputType.TYPE_CLASS_PHONE -> Layer.SYMBOLS
         else -> Layer.LETTERS
     }
 

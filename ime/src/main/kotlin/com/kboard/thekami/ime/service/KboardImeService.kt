@@ -3,14 +3,19 @@ package com.kboard.thekami.ime.service
 import android.inputmethodservice.InputMethodService
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import com.kboard.thekami.data.learning.createWordStore
 import com.kboard.thekami.data.settings.KeyboardAppearance
+import com.kboard.thekami.data.settings.KeyboardBehavior
 import com.kboard.thekami.data.settings.KeyboardSettings
 import com.kboard.thekami.data.settings.KeyboardSound
+import com.kboard.thekami.data.settings.SpaceLongPress
 import com.kboard.thekami.data.settings.createSettingsRepository
 import com.kboard.thekami.engine.input.KeyInputHandler
 import com.kboard.thekami.engine.language.Language
+import com.kboard.thekami.engine.layout.ControlAction
 import com.kboard.thekami.engine.layout.Key
+import com.kboard.thekami.engine.layout.Layer
 import com.kboard.thekami.engine.layout.Layouts
 import com.kboard.thekami.engine.suggest.LearningPolicy
 import com.kboard.thekami.engine.suggest.Seeds
@@ -23,6 +28,7 @@ import com.kboard.thekami.ime.input.EditorTraits
 import com.kboard.thekami.ime.input.InputConnectionEditor
 import com.kboard.thekami.ime.render.KeyListener
 import com.kboard.thekami.ime.render.KeyboardView
+import com.kboard.thekami.ime.render.ToolbarAction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -64,6 +70,7 @@ class KboardImeService : InputMethodService() {
     private var autocorrectEnabled = KeyboardSettings().autocorrectEnabled
     private var appearance = KeyboardAppearance()
     private var sound = KeyboardSound()
+    private var behavior = KeyboardBehavior()
 
     // Facts about the focused text field, set in onStartInputView.
     private var sensitiveField = false
@@ -79,12 +86,32 @@ class KboardImeService : InputMethodService() {
 
         override fun onKeyRepeat(key: Key) = typeKey(key)
 
+        override fun onKeyLongPress(key: Key) {
+            if (hapticsEnabled) haptics.perform(key)
+            when (behavior.spaceLongPress) {
+                SpaceLongPress.SWITCH_LANGUAGE -> typeKey(Key.Control(ControlAction.SWITCH_LANGUAGE, 1f))
+                SpaceLongPress.KEYBOARD_PICKER -> getSystemService(InputMethodManager::class.java)?.showInputMethodPicker()
+                SpaceLongPress.NOTHING -> Unit
+            }
+        }
+
         override fun onSuggestionPick(index: Int) {
             val suggestion = suggestions.getOrNull(index) ?: return
             if (hapticsEnabled) haptics.suggestionSelected()
             if (sound.enabled) sounds.suggestionSelected(sound.gain)
             inputHandler.acceptSuggestion(suggestion)
             showCurrentState()
+        }
+
+        override fun onToolbarAction(action: ToolbarAction) {
+            if (hapticsEnabled) haptics.suggestionSelected()
+            when (action) {
+                ToolbarAction.NUMPAD -> {
+                    inputHandler.showLayer(Layer.NUMPAD)
+                    showCurrentState()
+                }
+                ToolbarAction.SETTINGS -> openCompanionApp()
+            }
         }
     }
 
@@ -99,9 +126,10 @@ class KboardImeService : InputMethodService() {
                 autocorrectEnabled = it.autocorrectEnabled
                 appearance = it.appearance
                 sound = it.sound
+                behavior = it.behavior
                 inputHandler.ignoredCorrections = it.ignoredCorrections
                 applyFieldRules()
-                // A changed number row, height or preview choice shows up at once.
+                // A changed number row, height, preview or gesture choice shows up at once.
                 showCurrentState()
             }
         }
@@ -172,6 +200,7 @@ class KboardImeService : InputMethodService() {
         )
         view.heightPercent = appearance.heightPercent
         view.keyPreviewEnabled = appearance.keyPreviewEnabled
+        view.spaceLongPressEnabled = behavior.spaceLongPress != SpaceLongPress.NOTHING
         view.shiftActive = inputHandler.shifted
         view.spaceLabel = inputHandler.language.nativeName
         refreshSuggestions(view)

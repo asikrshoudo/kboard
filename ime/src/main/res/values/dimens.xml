@@ -17,4 +17,6 @@
     <!-- How far a suggestion travels up while it fades in (and the old one fades out). -->
     <dimen name="kb_strip_rise">4dp</dimen>
     <dimen name="kb_strip_text_size">17sp</dimen>
+    <!-- Width of the toolbar toggle button, and of every toolbar button. -->
+    <dimen name="kb_toolbar_button_width">44dp</dimen>
 </resources>

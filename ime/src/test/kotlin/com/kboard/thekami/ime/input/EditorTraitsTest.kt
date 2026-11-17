@@ -56,9 +56,17 @@ class EditorTraitsTest {
     }
 
     @Test
-    fun numberAndPhoneFieldsOpenOnTheSymbolsPage() {
-        assertEquals(Layer.SYMBOLS, EditorTraits.startLayer(InputType.TYPE_CLASS_NUMBER))
+    fun numberFieldsOpenOnTheNumberPad() {
+        assertEquals(Layer.NUMPAD, EditorTraits.startLayer(InputType.TYPE_CLASS_NUMBER))
+    }
+
+    @Test
+    fun phoneFieldsOpenOnTheSymbolsPage() {
         assertEquals(Layer.SYMBOLS, EditorTraits.startLayer(InputType.TYPE_CLASS_PHONE))
+    }
+
+    @Test
+    fun otherFieldsOpenOnTheLetters() {
         assertEquals(Layer.LETTERS, EditorTraits.startLayer(text))
     }
 
