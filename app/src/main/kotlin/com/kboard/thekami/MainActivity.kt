@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import com.kboard.thekami.setup.KeyboardStatus
+import com.kboard.thekami.ui.GestureActions
 import com.kboard.thekami.ui.HomeActions
 import com.kboard.thekami.ui.HomeScreen
 import com.kboard.thekami.ui.LayoutActions
@@ -42,6 +43,7 @@ class MainActivity : ComponentActivity() {
                 onEnabledChange = viewModel::setSoundEnabled,
                 onVolumeChange = viewModel::setSoundVolumePercent,
             ),
+            gestures = GestureActions(onSpaceLongPressChange = viewModel::setSpaceLongPress),
         )
         setContent {
             KboardTheme {

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gestures_title">Gestures</string>
+    <string name="space_long_press_title">When you hold the space bar</string>
+    <string name="space_long_press_language">Switch language</string>
+    <string name="space_long_press_picker">Choose another keyboard</string>
+    <string name="space_long_press_nothing">Do nothing</string>
+    <string name="space_long_press_hint">While holding the space bar does something, the space is typed when you lift your finger, so that a long press does not type one first.</string>
+</resources>

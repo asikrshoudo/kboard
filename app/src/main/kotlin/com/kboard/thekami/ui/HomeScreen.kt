@@ -54,6 +54,7 @@ fun HomeScreen(
             )
             SoundCard(settings.sound, actions.sound)
             LayoutCard(settings.appearance, actions.layout)
+            GesturesCard(settings.behavior.spaceLongPress, actions.gestures)
             TryItCard()
             LearningCard(settings.incognitoEnabled, actions.onIncognitoChange, actions.onResetLearning)
             PrivacyCard()

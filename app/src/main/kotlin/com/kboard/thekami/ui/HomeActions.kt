@@ -8,4 +8,5 @@ class HomeActions(
     val onResetLearning: () -> Unit,
     val layout: LayoutActions,
     val sound: SoundActions,
+    val gestures: GestureActions,
 )

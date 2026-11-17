@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kboard.thekami.data.settings.KeyboardSettings
 import com.kboard.thekami.data.settings.SettingsRepository
+import com.kboard.thekami.data.settings.SpaceLongPress
 import com.kboard.thekami.engine.suggest.WordStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -53,6 +54,10 @@ class SettingsViewModel @Inject constructor(
 
     fun setSoundVolumePercent(percent: Int) {
         viewModelScope.launch { repository.sound.setVolumePercent(percent) }
+    }
+
+    fun setSpaceLongPress(action: SpaceLongPress) {
+        viewModelScope.launch { repository.behavior.setSpaceLongPress(action) }
     }
 
     /** Deletes every learned word and word pair, and the corrections the user had undone. */
