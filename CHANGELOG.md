@@ -39,3 +39,9 @@ had a public release yet.
   and enter) with a volume setting, off by default and separate from vibration.
 - CI now fails if the APK asks for the internet permission.
 - Documentation split by topic under `docs/`.
+- Number pad: opens in number fields and from the toolbar.
+- Toolbar at the left of the suggestion strip (number pad and a shortcut to the
+  settings). More buttons come with later features.
+- Choice of what holding the space bar does: switch language, choose another
+  keyboard, or nothing.
+- Documentation: `docs/status.md` lists what works and what is planned.
